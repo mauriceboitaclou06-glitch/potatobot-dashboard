@@ -2,701 +2,610 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Potatoes Académie</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-:root{
-  --bg:#0c0d10;--bg2:#13151b;--bg3:#1a1d26;--bg4:#21253200;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
-  --text:#eceef2;--muted:#6b7280;--muted2:#9ca3af;
-  --accent:#7c6af7;--accent2:#a78bfa;
-  --green:#34d399;--red:#f87171;--yellow:#fbbf24;--blue:#60a5fa;--orange:#fb923c;
-  --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
-  --r:12px;--rl:16px;
-}
-[data-theme=light]{
-  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f7f8fa;--bg4:#ebedf0;
-  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
-  --text:#111318;--muted:#6b7280;--muted2:#9ca3af;
-  --accent:#6d5af0;--accent2:#7c6af7;
-  --green:#059669;--red:#dc2626;--yellow:#d97706;--blue:#2563eb;--orange:#ea580c;
-}
+/* ── Reset & Tokens ─────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+:root{
+  --bg:#f5f6fa;
+  --surface:#ffffff;
+  --surface2:#f0f2f8;
+  --border:#e8eaf0;
+  --border2:#d4d7e3;
+  --text:#0f1117;
+  --muted:#8b93a7;
+  --muted2:#bcc1cf;
+  --accent:#4f6ef7;
+  --accent-light:#eef1fe;
+  --accent2:#7b93f8;
+  --green:#22c55e;
+  --green-light:#f0fdf4;
+  --red:#ef4444;
+  --red-light:#fef2f2;
+  --yellow:#f59e0b;
+  --yellow-light:#fffbeb;
+  --orange:#f97316;
+  --purple:#8b5cf6;
+  --num:'Plus Jakarta Sans',sans-serif;
+  --sans:'Inter',sans-serif;
+  --r:10px;--rl:14px;
+}
+[data-dark]{
+  --bg:#0d0f14;
+  --surface:#13161e;
+  --surface2:#1a1e28;
+  --border:#1f2433;
+  --border2:#2a3045;
+  --text:#edf0f7;
+  --muted:#5a6380;
+  --muted2:#3a4158;
+  --accent:#5b72f8;
+  --accent-light:#1a1f3a;
+  --accent2:#8fa3fa;
+  --green:#4ade80;
+  --green-light:#052e16;
+  --red:#f87171;
+  --red-light:#2d0a0a;
+  --yellow:#fbbf24;
+  --yellow-light:#2d1f00;
+  --orange:#fb923c;
+  --purple:#a78bfa;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;font-size:14px;-webkit-font-smoothing:antialiased}
 
-/* ── Shell ── */
-.shell{display:grid;grid-template-columns:56px 1fr;height:100vh;transition:.3s}
-.shell.expanded{grid-template-columns:230px 1fr}
+/* ── Layout ─────────────────────────────────────────────────── */
+.app{display:flex;height:100vh}
 
-/* ── Sidebar ── */
+/* ── Sidebar ─────────────────────────────────────────────────── */
 .sidebar{
-  background:var(--bg2);border-right:1px solid var(--border);
-  display:flex;flex-direction:column;overflow:hidden;
-  transition:width .3s;
+  width:220px;flex-shrink:0;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  transition:width .25s;overflow:hidden;
 }
-.sidebar-brand{
-  height:60px;display:flex;align-items:center;gap:12px;
-  padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden;
-}
-.brand-avatar{
-  width:32px;height:32px;border-radius:9px;object-fit:cover;flex-shrink:0;
-}
-.brand-text{opacity:0;white-space:nowrap;transition:opacity .2s;pointer-events:none}
-.shell.expanded .brand-text{opacity:1}
-.brand-name{font-size:14px;font-weight:700;letter-spacing:-.3px}
-.brand-sub{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.sidebar.collapsed{width:60px}
 
-.nav-body{flex:1;overflow:hidden;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
-.nav-item{
-  display:flex;align-items:center;gap:12px;
-  padding:10px;border-radius:9px;cursor:pointer;
-  color:var(--muted);font-size:13.5px;font-weight:500;
-  white-space:nowrap;overflow:hidden;transition:all .15s;
-  position:relative;
+.sb-brand{
+  height:64px;display:flex;align-items:center;gap:11px;
+  padding:0 16px;border-bottom:1px solid var(--border);flex-shrink:0;
 }
-.nav-item:hover{color:var(--text);background:var(--bg3)}
-.nav-item.active{color:var(--accent2);background:rgba(124,106,247,0.12)}
-.nav-item .ni{font-size:18px;flex-shrink:0;width:20px;text-align:center}
-.nav-label{opacity:0;transition:opacity .15s;pointer-events:none}
-.shell.expanded .nav-label{opacity:1}
-
-.sidebar-foot{
-  padding:10px 8px;border-top:1px solid var(--border);flex-shrink:0;
-  display:flex;flex-direction:column;gap:6px;
+.sb-logo{
+  width:34px;height:34px;border-radius:9px;flex-shrink:0;
+  object-fit:cover;
 }
-.foot-row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:9px;overflow:hidden;cursor:pointer;transition:background .15s}
-.foot-row:hover{background:var(--bg3)}
-.foot-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center;color:var(--muted)}
-.foot-label{opacity:0;font-size:12px;color:var(--muted);font-family:var(--mono);white-space:nowrap;transition:opacity .15s}
-.shell.expanded .foot-label{opacity:1}
+.sb-text{white-space:nowrap;overflow:hidden;transition:opacity .2s}
+.sidebar.collapsed .sb-text{opacity:0;pointer-events:none}
+.sb-name{font-size:13px;font-weight:700;letter-spacing:-.2px;line-height:1.2}
+.sb-sub{font-size:10px;color:var(--muted);letter-spacing:.3px}
 
-/* Toggle button */
-.toggle-btn{
-  position:absolute;top:18px;left:calc(56px - 14px);
-  width:24px;height:24px;border-radius:50%;
-  background:var(--bg2);border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;z-index:10;font-size:12px;color:var(--muted);
-  transition:left .3s,transform .3s;
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:3px;overflow:hidden}
+.sb-item{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 10px;border-radius:var(--r);cursor:pointer;
+  color:var(--muted);font-size:13px;font-weight:500;
+  white-space:nowrap;transition:all .15s;
 }
-.shell.expanded .toggle-btn{left:calc(230px - 14px);transform:rotate(180deg)}
+.sb-item:hover{color:var(--text);background:var(--surface2)}
+.sb-item.active{color:var(--accent);background:var(--accent-light);font-weight:600}
+.sb-icon{font-size:17px;flex-shrink:0;width:20px;text-align:center}
+.sb-lbl{overflow:hidden;transition:opacity .15s}
+.sidebar.collapsed .sb-lbl{opacity:0;pointer-events:none}
 
-/* ── Main ── */
-.main{overflow-y:auto;display:flex;flex-direction:column;background:var(--bg)}
-.main::-webkit-scrollbar{width:4px}
-.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-foot{padding:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px}
+.sb-foot-item{
+  display:flex;align-items:center;gap:11px;padding:8px 10px;
+  border-radius:var(--r);cursor:pointer;color:var(--muted);font-size:12px;
+  white-space:nowrap;transition:all .15s;
+}
+.sb-foot-item:hover{color:var(--text);background:var(--surface2)}
+.sb-foot-item .sb-icon{font-size:15px}
 
-/* Topbar */
+/* ── Content ─────────────────────────────────────────────────── */
+.content-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
 .topbar{
-  height:60px;border-bottom:1px solid var(--border);background:var(--bg2);
+  height:64px;border-bottom:1px solid var(--border);
+  background:var(--surface);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;flex-shrink:0;position:sticky;top:0;z-index:5;
+  padding:0 28px;flex-shrink:0;
 }
-.topbar-left{display:flex;align-items:center;gap:10px}
-.page-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
-.page-sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.sb-toggle{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;color:var(--muted);font-size:16px;transition:all .15s;
+}
+.sb-toggle:hover{background:var(--surface2);color:var(--text)}
+.tb-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
 .topbar-right{display:flex;align-items:center;gap:10px}
-.live-badge{
+.live-pill{
   display:flex;align-items:center;gap:5px;
-  padding:4px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);
-  background:rgba(52,211,153,0.1);color:var(--green);
-  border:1px solid rgba(52,211,153,0.2);
+  padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;
+  background:var(--green-light);color:var(--green);border:1px solid currentColor;
+  letter-spacing:.2px;
 }
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.countdown-badge{font-size:11px;font-family:var(--mono);color:var(--muted)}
-.theme-toggle{
-  width:36px;height:20px;border-radius:20px;background:var(--border2);
-  border:none;cursor:pointer;position:relative;display:flex;align-items:center;padding:2px;
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.cd-badge{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.2px}
+.theme-pill{
+  width:44px;height:24px;border-radius:12px;background:var(--surface2);
+  border:1px solid var(--border2);cursor:pointer;display:flex;align-items:center;
+  padding:2px;transition:background .2s;position:relative;
 }
-.theme-toggle.on{background:var(--accent)}
-.tknob{width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
-.theme-toggle.on .tknob{transform:translateX(16px)}
+.theme-pill.dark-mode{background:var(--accent)}
+.theme-pill .knob{width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.theme-pill.dark-mode .knob{transform:translateX(20px)}
 
-/* Content area */
-.content{padding:24px 28px;flex:1}
-.page{display:none;flex-direction:column;gap:20px;animation:fi .2s}
+/* ── Page ────────────────────────────────────────────────────── */
+.scroll{overflow-y:auto;flex:1;padding:24px 28px}
+.scroll::-webkit-scrollbar{width:4px}
+.scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{display:none;flex-direction:column;gap:20px;animation:fi .2s ease}
 .page.active{display:flex}
-@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* Cards */
-.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px}
-.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);font-family:var(--mono)}
-.card-action{font-size:11px;font-family:var(--mono);color:var(--accent2);cursor:pointer;padding:3px 8px;border-radius:6px;border:1px solid var(--border2)}
+/* ── Cards ────────────────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:20px 22px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.card-action{font-size:11px;color:var(--accent);font-weight:600;cursor:pointer;padding:4px 10px;border-radius:6px;border:1px solid var(--accent-light);background:var(--accent-light);transition:all .15s}
+.card-action:hover{background:var(--accent);color:#fff}
 
-/* Stat grid */
-.stat-grid{display:grid;gap:12px}
-.sg-4{grid-template-columns:repeat(4,1fr)}
-.sg-3{grid-template-columns:repeat(3,1fr)}
-.sg-2{grid-template-columns:repeat(2,1fr)}
-.stat-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:var(--r);padding:16px 18px;
-  display:flex;flex-direction:column;gap:4px;
-  transition:border-color .15s,transform .15s;
+/* ── Stat grid ────────────────────────────────────────────────── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+
+.scard{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rl);padding:18px 20px;
+  display:flex;flex-direction:column;gap:6px;
+  transition:border-color .15s,box-shadow .15s;cursor:default;
 }
-.stat-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-.sc-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.7px}
-.sc-val{font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-1px}
-.sc-val span{font-size:13px;font-weight:500;color:var(--muted)}
-.sc-icon{font-size:16px;margin-bottom:2px}
-.sc-delta{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:1px}
+.scard:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+[data-dark] .scard:hover{box-shadow:0 4px 20px rgba(0,0,0,.3)}
+.sc-top{display:flex;align-items:center;justify-content:space-between}
+.sc-label{font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.2px}
+.sc-badge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.sc-val{font-family:var(--num);font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1;color:var(--text)}
+.sc-val .unit{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0}
+.sc-sub{font-size:11px;color:var(--muted);font-weight:400}
 
-/* Hero */
+/* Color variants */
+.c-blue .sc-badge{background:var(--accent-light);color:var(--accent)}
+.c-green .sc-badge{background:var(--green-light);color:var(--green)}
+.c-red .sc-badge{background:var(--red-light);color:var(--red)}
+.c-yellow .sc-badge{background:var(--yellow-light);color:var(--yellow)}
+.c-purple .sc-badge{background:#f3f0ff;color:var(--purple)}
+[data-dark] .c-purple .sc-badge{background:#1e1a2e}
+.c-orange .sc-badge{background:#fff7ed;color:var(--orange)}
+[data-dark] .c-orange .sc-badge{background:#1f1208}
+
+/* ── Hero ─────────────────────────────────────────────────────── */
 .hero{
-  background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);
-  padding:20px 24px;display:flex;align-items:center;gap:18px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--rl);padding:22px 24px;
+  display:flex;align-items:center;gap:20px;
 }
-.hero-av{width:52px;height:52px;border-radius:14px;object-fit:cover;flex-shrink:0}
-.hero-info{flex:1}
-.hero-name{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.hero-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px}
-.hero-meta{display:flex;gap:18px;margin-top:10px}
-.hm-item{display:flex;flex-direction:column;gap:2px}
-.hm-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.7px}
-.hm-val{font-size:15px;font-weight:700;font-family:var(--mono)}
+.hero-av{width:52px;height:52px;border-radius:13px;object-fit:cover;flex-shrink:0}
+.hero-name{font-size:18px;font-weight:800;letter-spacing:-.4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hero-sub{font-size:12px;color:var(--muted);margin-top:4px;font-weight:400}
+.hero-metrics{display:flex;gap:24px;margin-top:12px}
+.hm{display:flex;flex-direction:column;gap:2px}
+.hm-l{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.hm-v{font-family:var(--num);font-size:16px;font-weight:700;letter-spacing:-.5px}
 
 /* Pill */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;flex-shrink:0}
-.pill.on{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
-.pill.off{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
-[data-theme=light] .pill.on{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
-[data-theme=light] .pill.off{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;flex-shrink:0;letter-spacing:.1px}
+.pill-on{background:var(--green-light);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.pill-off{background:var(--red-light);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+[data-dark] .pill-on{border-color:rgba(74,222,128,.15)}
+[data-dark] .pill-off{border-color:rgba(248,113,113,.15)}
+.pdot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 1.4s infinite}
 
-/* Bars */
-.bar-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+/* ── Bars ─────────────────────────────────────────────────────── */
+.bar-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .bar-row:last-child{margin-bottom:0}
-.bar-hd{display:flex;justify-content:space-between}
-.bar-name{font-size:12px;font-weight:500}
-.bar-val{font-size:11px;font-family:var(--mono);color:var(--muted)}
-.bar-track{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .7s ease}
-.bg-blue{background:var(--blue)} .bg-pu{background:var(--accent)} .bg-gr{background:var(--green)} .bg-ye{background:var(--yellow)} .bg-re{background:var(--red)}
+.bar-hd{display:flex;justify-content:space-between;align-items:baseline}
+.bar-nm{font-size:12px;font-weight:500}
+.bar-vl{font-family:var(--num);font-size:12px;color:var(--muted);font-weight:600}
+.bar-track{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.bf{height:100%;border-radius:4px;transition:width .7s ease}
+.bf-blue{background:var(--accent)} .bf-green{background:var(--green)}
+.bf-yellow{background:var(--yellow)} .bf-red{background:var(--red)} .bf-purple{background:var(--purple)}
 
-/* Logs */
-.log-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.lf{padding:3px 10px;border-radius:20px;font-size:10px;font-family:var(--mono);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s}
-.lf:hover{color:var(--text)}
-.lf.active{background:rgba(124,106,247,0.15);color:var(--accent2);border-color:var(--accent)}
-.log-wrap{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
-.log-wrap::-webkit-scrollbar{width:3px}
-.log-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.log-line{display:grid;grid-template-columns:56px 20px 120px 1fr;gap:8px;padding:5px 8px;border-radius:6px;align-items:baseline;font-family:var(--mono);font-size:11px}
-.log-line:hover{background:var(--bg3)}
-.lt{color:var(--muted);font-size:10px}
-.li{font-size:13px;line-height:1}
-.lu{color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ld{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.log-empty{color:var(--muted);padding:24px;text-align:center;font-family:var(--mono);font-size:11px}
+/* ── Logs ─────────────────────────────────────────────────────── */
+.lf-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.lf{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;letter-spacing:.1px}
+.lf:hover{color:var(--text);border-color:var(--border2)}
+.lf.act{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
 
-/* Log type badges */
-.ltype{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;white-space:nowrap}
-.lt-ban{background:rgba(248,113,113,.15);color:var(--red)}
-.lt-mute{background:rgba(251,191,36,.15);color:var(--yellow)}
-.lt-kick{background:rgba(251,146,60,.15);color:var(--orange)}
-.lt-join{background:rgba(52,211,153,.15);color:var(--green)}
-.lt-leave{background:rgba(107,114,128,.15);color:var(--muted2)}
-.lt-del{background:rgba(248,113,113,.12);color:var(--red)}
-.lt-edit{background:rgba(96,165,250,.12);color:var(--blue)}
-.lt-warn{background:rgba(251,191,36,.12);color:var(--yellow)}
-.lt-other{background:var(--bg3);color:var(--muted)}
+.log-list{max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.log-list::-webkit-scrollbar{width:3px}
+.log-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.log-row{
+  display:grid;grid-template-columns:52px 22px 1fr auto;
+  gap:10px;padding:7px 10px;border-radius:8px;
+  align-items:center;transition:background .1s;
+}
+.log-row:hover{background:var(--surface2)}
+.lr-time{font-size:10px;color:var(--muted);font-family:var(--num);font-weight:500}
+.lr-icon{font-size:14px;text-align:center}
+.lr-msg{font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:400}
+.lr-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.tag-ban{background:var(--red-light);color:var(--red)}
+.tag-mute{background:var(--yellow-light);color:var(--yellow)}
+.tag-kick{background:#fff7ed;color:var(--orange)}
+.tag-warn{background:#f3f0ff;color:var(--purple)}
+.tag-join{background:var(--green-light);color:var(--green)}
+.tag-leave{background:var(--surface2);color:var(--muted)}
+.tag-del{background:var(--red-light);color:var(--red)}
+.tag-edit{background:var(--accent-light);color:var(--accent)}
+.tag-other{background:var(--surface2);color:var(--muted)}
+[data-dark] .tag-kick{background:#1f1208;color:var(--orange)}
+[data-dark] .tag-warn{background:#1e1a2e;color:var(--purple)}
+.log-empty{padding:28px;text-align:center;color:var(--muted);font-size:12px;font-weight:500}
 
-/* Chart */
-.chart-wrap{position:relative;height:200px}
+/* ── Chart ────────────────────────────────────────────────────── */
+.chart-box{position:relative;height:190px}
 
-/* Row layouts */
-.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-.row-13{display:grid;grid-template-columns:1fr 2fr;gap:16px}
-
-@media(max-width:900px){.sg-4{grid-template-columns:repeat(2,1fr)}.row-2,.row-3,.row-13{grid-template-columns:1fr}}
+/* ── Responsive ───────────────────────────────────────────────── */
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:800px){.g4,.g3,.g2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="shell" id="shell">
+<div class="app">
 
-  <!-- ── Sidebar ── -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <img class="brand-avatar" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="PA" onerror="this.style.display='none'">
-      <div class="brand-text">
-        <div class="brand-name">Potatoes Académie</div>
-        <div class="brand-sub">dashboard</div>
+<!-- ── Sidebar ── -->
+<aside class="sidebar" id="sb">
+  <div class="sb-brand">
+    <img class="sb-logo" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="" onerror="this.style.display='none'">
+    <div class="sb-text"><div class="sb-name">Potatoes Académie</div><div class="sb-sub">DASHBOARD</div></div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-item active" onclick="goto('home',this)"><span class="sb-icon">⊞</span><span class="sb-lbl">Accueil</span></div>
+    <div class="sb-item" onclick="goto('stats',this)"><span class="sb-icon">📊</span><span class="sb-lbl">Statistiques</span></div>
+    <div class="sb-item" onclick="goto('logs',this)"><span class="sb-icon">📋</span><span class="sb-lbl">Logs Discord</span></div>
+    <div class="sb-item" onclick="goto('system',this)"><span class="sb-icon">💻</span><span class="sb-lbl">Système</span></div>
+  </nav>
+  <div class="sb-foot">
+    <div class="sb-foot-item" onclick="toggleTheme()">
+      <span class="sb-icon" id="th-icon">🌙</span>
+      <span class="sb-lbl" id="th-lbl">Mode sombre</span>
+    </div>
+    <div class="sb-foot-item">
+      <span class="sb-icon">↻</span>
+      <span class="sb-lbl">Refresh <span id="cd-sb">15s</span></span>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Content ── -->
+<div class="content-wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="sb-toggle" onclick="toggleSb()">☰</button>
+      <div class="tb-title" id="tb-title">Accueil</div>
+    </div>
+    <div class="topbar-right">
+      <div class="live-pill"><div class="live-dot"></div> Live</div>
+      <div class="cd-badge">↻ <span id="cd-top">15</span>s</div>
+      <button class="theme-pill" id="tp" onclick="toggleTheme()"><div class="knob"></div></button>
+    </div>
+  </div>
+
+  <div class="scroll">
+
+    <!-- ══ HOME ══ -->
+    <div class="page active" id="page-home">
+      <div class="hero">
+        <img class="hero-av" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="" onerror="this.style.display='none'">
+        <div style="flex:1">
+          <div class="hero-name">Potatoes Académie <span class="pill pill-on" id="h-pill">● En ligne</span></div>
+          <div class="hero-sub" id="h-sub">— serveurs · — membres · Uptime —</div>
+          <div class="hero-metrics">
+            <div class="hm"><div class="hm-l">Latence</div><div class="hm-v" id="h-lat">— ms</div></div>
+            <div class="hm"><div class="hm-l">Messages</div><div class="hm-v" id="h-msg">—</div></div>
+            <div class="hm"><div class="hm-l">CPU</div><div class="hm-v" id="h-cpu">—%</div></div>
+            <div class="hm"><div class="hm-l">RAM bot</div><div class="hm-v" id="h-ram">— MB</div></div>
+            <div class="hm"><div class="hm-l">Màj</div><div class="hm-v" id="h-upd">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g4">
+        <div class="scard c-red"><div class="sc-top"><span class="sc-label">Bans</span><div class="sc-badge">🔨</div></div><div class="sc-val" id="h-ban">—</div><div class="sc-sub">Modération</div></div>
+        <div class="scard c-yellow"><div class="sc-top"><span class="sc-label">Mutes</span><div class="sc-badge">🔇</div></div><div class="sc-val" id="h-mute">—</div><div class="sc-sub">Modération</div></div>
+        <div class="scard c-orange"><div class="sc-top"><span class="sc-label">Kicks</span><div class="sc-badge">👢</div></div><div class="sc-val" id="h-kick">—</div><div class="sc-sub">Modération</div></div>
+        <div class="scard c-purple"><div class="sc-top"><span class="sc-label">Warns</span><div class="sc-badge">⚠️</div></div><div class="sc-val" id="h-warn">—</div><div class="sc-sub">Modération</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Messages — 7 derniers jours</div></div>
+        <div class="chart-box"><canvas id="ch-home-msg"></canvas></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Derniers événements</div>
+          <span class="card-action" onclick="goto('logs',document.querySelectorAll('.sb-item')[2])">Voir tout →</span>
+        </div>
+        <div class="log-list" id="home-logs" style="max-height:200px"></div>
       </div>
     </div>
 
-    <nav class="nav-body">
-      <div class="nav-item active" onclick="goto('home',this)">
-        <span class="ni">🏠</span><span class="nav-label">Accueil</span>
+    <!-- ══ STATS ══ -->
+    <div class="page" id="page-stats">
+      <div class="g4">
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Messages</span><div class="sc-badge">💬</div></div><div class="sc-val" id="s-msg">—</div><div class="sc-sub">Total session</div></div>
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Commandes</span><div class="sc-badge">⚡</div></div><div class="sc-val" id="s-cmd">—</div><div class="sc-sub">Utilisées</div></div>
+        <div class="scard c-green"><div class="sc-top"><span class="sc-label">Arrivées</span><div class="sc-badge">👋</div></div><div class="sc-val" id="s-join">—</div><div class="sc-sub">Membres</div></div>
+        <div class="scard c-red"><div class="sc-top"><span class="sc-label">Départs</span><div class="sc-badge">🚪</div></div><div class="sc-val" id="s-leave">—</div><div class="sc-sub">Membres</div></div>
+        <div class="scard c-red"><div class="sc-top"><span class="sc-label">Bans</span><div class="sc-badge">🔨</div></div><div class="sc-val" id="s-ban">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-yellow"><div class="sc-top"><span class="sc-label">Mutes</span><div class="sc-badge">🔇</div></div><div class="sc-val" id="s-mute">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-orange"><div class="sc-top"><span class="sc-label">Kicks</span><div class="sc-badge">👢</div></div><div class="sc-val" id="s-kick">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-purple"><div class="sc-top"><span class="sc-label">Warns</span><div class="sc-badge">⚠️</div></div><div class="sc-val" id="s-warn">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Tickets</span><div class="sc-badge">🎫</div></div><div class="sc-val" id="s-tick">—</div><div class="sc-sub">Ouverts</div></div>
+        <div class="scard c-red"><div class="sc-top"><span class="sc-label">Msg supprimés</span><div class="sc-badge">🗑️</div></div><div class="sc-val" id="s-del">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Msg édités</span><div class="sc-badge">✏️</div></div><div class="sc-val" id="s-edit">—</div><div class="sc-sub">Total</div></div>
+        <div class="scard c-green"><div class="sc-top"><span class="sc-label">Ping</span><div class="sc-badge">🏓</div></div><div class="sc-val" id="s-ping">—<span class="unit"> ms</span></div><div class="sc-sub">WebSocket</div></div>
       </div>
-      <div class="nav-item" onclick="goto('stats',this)">
-        <span class="ni">📈</span><span class="nav-label">Statistiques</span>
-      </div>
-      <div class="nav-item" onclick="goto('logs',this)">
-        <span class="ni">📋</span><span class="nav-label">Logs Discord</span>
-      </div>
-      <div class="nav-item" onclick="goto('system',this)">
-        <span class="ni">💻</span><span class="nav-label">Système</span>
-      </div>
-    </nav>
 
-    <div class="sidebar-foot">
-      <div class="foot-row" onclick="toggleTheme()">
-        <span class="foot-icon" id="theme-icon">🌙</span>
-        <span class="foot-label" id="theme-label">Mode sombre</span>
-      </div>
-      <div class="foot-row">
-        <span class="foot-icon">↻</span>
-        <span class="foot-label refresh-info">Refresh dans <span id="cd-side">15s</span></span>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Toggle sidebar -->
-  <div class="toggle-btn" id="toggle-btn" onclick="toggleSidebar()">›</div>
-
-  <!-- ── Main ── -->
-  <div class="main">
-    <div class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div class="page-title" id="tb-title">Accueil</div>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <div class="live-badge"><div class="live-dot"></div> Live</div>
-        <div class="countdown-badge">↻ <span id="cd-top">15</span>s</div>
-        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()"><div class="tknob"></div></button>
+      <div class="g2">
+        <div class="card"><div class="card-head"><div class="card-title">Messages / jour</div></div><div class="chart-box"><canvas id="ch-msg"></canvas></div></div>
+        <div class="card"><div class="card-head"><div class="card-title">Modération / jour</div></div><div class="chart-box"><canvas id="ch-mod"></canvas></div></div>
+        <div class="card"><div class="card-head"><div class="card-title">Membres / jour</div></div><div class="chart-box"><canvas id="ch-mem"></canvas></div></div>
+        <div class="card"><div class="card-head"><div class="card-title">Suppressions & Éditions / jour</div></div><div class="chart-box"><canvas id="ch-edit"></canvas></div></div>
       </div>
     </div>
 
-    <div class="content">
-
-      <!-- ══ HOME ══ -->
-      <div class="page active" id="page-home">
-
-        <!-- Hero -->
-        <div class="hero">
-          <img class="hero-av" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="" onerror="this.style.display='none'">
-          <div class="hero-info">
-            <div class="hero-name">
-              Potatoes Académie
-              <span class="pill on" id="h-pill">● Chargement</span>
-            </div>
-            <div class="hero-sub">Uptime : <span id="h-uptime">—</span> &nbsp;·&nbsp; <span id="h-guilds">—</span> serveurs &nbsp;·&nbsp; <span id="h-users">—</span> membres</div>
-            <div class="hero-meta">
-              <div class="hm-item"><div class="hm-label">Latence</div><div class="hm-val" id="h-lat">— ms</div></div>
-              <div class="hm-item"><div class="hm-label">Messages</div><div class="hm-val" id="h-msg">—</div></div>
-              <div class="hm-item"><div class="hm-label">CPU</div><div class="hm-val" id="h-cpu">—%</div></div>
-              <div class="hm-item"><div class="hm-label">RAM bot</div><div class="hm-val" id="h-ram">— MB</div></div>
-              <div class="hm-item"><div class="hm-label">MAJ</div><div class="hm-val" id="h-upd">—</div></div>
-            </div>
-          </div>
+    <!-- ══ LOGS ══ -->
+    <div class="page" id="page-logs">
+      <div class="g4">
+        <div class="scard c-red"><div class="sc-top"><span class="sc-label">Bans</span><div class="sc-badge">🔨</div></div><div class="sc-val" id="l-ban">—</div><div class="sc-sub">Session</div></div>
+        <div class="scard c-yellow"><div class="sc-top"><span class="sc-label">Mutes</span><div class="sc-badge">🔇</div></div><div class="sc-val" id="l-mute">—</div><div class="sc-sub">Session</div></div>
+        <div class="scard c-orange"><div class="sc-top"><span class="sc-label">Kicks</span><div class="sc-badge">👢</div></div><div class="sc-val" id="l-kick">—</div><div class="sc-sub">Session</div></div>
+        <div class="scard c-purple"><div class="sc-top"><span class="sc-label">Warns</span><div class="sc-badge">⚠️</div></div><div class="sc-val" id="l-warn">—</div><div class="sc-sub">Session</div></div>
+      </div>
+      <div class="card"><div class="card-head"><div class="card-title">Modération 7 jours</div></div><div class="chart-box"><canvas id="ch-mod-log"></canvas></div></div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Journal des événements Discord</div></div>
+        <div class="lf-wrap">
+          <button class="lf act" data-t="ALL" onclick="setLF(this)">Tous</button>
+          <button class="lf" data-t="ban" onclick="setLF(this)">🔨 Ban</button>
+          <button class="lf" data-t="mute" onclick="setLF(this)">🔇 Mute</button>
+          <button class="lf" data-t="kick" onclick="setLF(this)">👢 Kick</button>
+          <button class="lf" data-t="warn" onclick="setLF(this)">⚠️ Warn</button>
+          <button class="lf" data-t="member_join" onclick="setLF(this)">📥 Arrivée</button>
+          <button class="lf" data-t="member_leave" onclick="setLF(this)">📤 Départ</button>
+          <button class="lf" data-t="message_delete" onclick="setLF(this)">🗑️ Suppr.</button>
+          <button class="lf" data-t="message_edit" onclick="setLF(this)">✏️ Édit.</button>
         </div>
+        <div class="log-list" id="main-logs" style="max-height:460px"></div>
+      </div>
+    </div>
 
-        <!-- Quick stats -->
-        <div class="stat-grid sg-4">
-          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans</div><div class="sc-val" id="qs-bans">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes</div><div class="sc-val" id="qs-mutes">—</div></div>
-          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks</div><div class="sc-val" id="qs-kicks">—</div></div>
-          <div class="stat-card"><div class="sc-icon">⚡</div><div class="sc-label">Commandes</div><div class="sc-val" id="qs-cmds">—</div></div>
-        </div>
-
-        <!-- Chart messages 7j -->
+    <!-- ══ SYSTEM ══ -->
+    <div class="page" id="page-system">
+      <div class="g3">
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Statut</span></div><div class="sc-val" id="sy-st" style="font-size:16px;font-weight:700">—</div></div>
+        <div class="scard c-green"><div class="sc-top"><span class="sc-label">Uptime</span></div><div class="sc-val" id="sy-up" style="font-size:18px">—</div></div>
+        <div class="scard c-blue"><div class="sc-top"><span class="sc-label">Latence</span></div><div class="sc-val" id="sy-lat">—<span class="unit"> ms</span></div></div>
+      </div>
+      <div class="g2">
         <div class="card">
-          <div class="card-head">
-            <div class="card-title">Messages — 7 derniers jours</div>
-          </div>
-          <div class="chart-wrap"><canvas id="chart-msg-home"></canvas></div>
+          <div class="card-head"><div class="card-title">Processeur</div></div>
+          <div class="bar-row"><div class="bar-hd"><span class="bar-nm">CPU global</span><span class="bar-vl" id="sy-cpu-v">—%</span></div><div class="bar-track"><div class="bf bf-blue" id="sy-cpu-b" style="width:0%"></div></div></div>
         </div>
-
-        <!-- Derniers logs -->
         <div class="card">
-          <div class="card-head">
-            <div class="card-title">Derniers événements Discord</div>
-            <span class="card-action" onclick="goto('logs', document.querySelectorAll('.nav-item')[2])">Voir tout →</span>
-          </div>
-          <div class="log-wrap" id="home-logs" style="max-height:220px"></div>
+          <div class="card-head"><div class="card-title">Mémoire RAM</div></div>
+          <div class="bar-row"><div class="bar-hd"><span class="bar-nm">Système</span><span class="bar-vl" id="sy-ram-v">—%</span></div><div class="bar-track"><div class="bf bf-purple" id="sy-ram-b" style="width:0%"></div></div></div>
+          <div class="bar-row"><div class="bar-hd"><span class="bar-nm">Processus bot</span><span class="bar-vl" id="sy-bot-v">— MB</span></div><div class="bar-track"><div class="bf bf-green" id="sy-bot-b" style="width:0%"></div></div></div>
         </div>
       </div>
+    </div>
 
-      <!-- ══ STATS ══ -->
-      <div class="page" id="page-stats">
-        <div class="stat-grid sg-4">
-          <div class="stat-card"><div class="sc-icon">💬</div><div class="sc-label">Messages</div><div class="sc-val" id="st-msg">—</div></div>
-          <div class="stat-card"><div class="sc-icon">⚡</div><div class="sc-label">Commandes</div><div class="sc-val" id="st-cmd">—</div></div>
-          <div class="stat-card"><div class="sc-icon">👋</div><div class="sc-label">Arrivées</div><div class="sc-val" id="st-join">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🚪</div><div class="sc-label">Départs</div><div class="sc-val" id="st-leave">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans</div><div class="sc-val" id="st-ban">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes</div><div class="sc-val" id="st-mute">—</div></div>
-          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks</div><div class="sc-val" id="st-kick">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🎫</div><div class="sc-label">Tickets</div><div class="sc-val" id="st-tick">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🗑️</div><div class="sc-label">Msg supprimés</div><div class="sc-val" id="st-del">—</div></div>
-          <div class="stat-card"><div class="sc-icon">✏️</div><div class="sc-label">Msg édités</div><div class="sc-val" id="st-edit">—</div></div>
-          <div class="stat-card"><div class="sc-icon">⚠️</div><div class="sc-label">Warns</div><div class="sc-val" id="st-warn">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🏓</div><div class="sc-label">Ping</div><div class="sc-val" id="st-ping">—<span> ms</span></div></div>
-        </div>
-
-        <div class="row-2">
-          <div class="card">
-            <div class="card-head"><div class="card-title">Messages / jour</div></div>
-            <div class="chart-wrap"><canvas id="chart-msg"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><div class="card-title">Modération / jour</div></div>
-            <div class="chart-wrap"><canvas id="chart-mod"></canvas></div>
-          </div>
-        </div>
-
-        <div class="row-2">
-          <div class="card">
-            <div class="card-head"><div class="card-title">Membres / jour</div></div>
-            <div class="chart-wrap"><canvas id="chart-members"></canvas></div>
-          </div>
-          <div class="card">
-            <div class="card-head"><div class="card-title">Messages supprimés & édités / jour</div></div>
-            <div class="chart-wrap"><canvas id="chart-edits"></canvas></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══ LOGS ══ -->
-      <div class="page" id="page-logs">
-        <div class="stat-grid sg-4">
-          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans total</div><div class="sc-val" id="lg-ban">—</div></div>
-          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes total</div><div class="sc-val" id="lg-mute">—</div></div>
-          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks total</div><div class="sc-val" id="lg-kick">—</div></div>
-          <div class="stat-card"><div class="sc-icon">⚠️</div><div class="sc-label">Warns total</div><div class="sc-val" id="lg-warn">—</div></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><div class="card-title">Modération sur 7 jours</div></div>
-          <div class="chart-wrap"><canvas id="chart-mod-log"></canvas></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head">
-            <div class="card-title">Journal des événements</div>
-          </div>
-          <div class="log-filters">
-            <button class="lf active" data-t="ALL" onclick="setFilter(this)">Tous</button>
-            <button class="lf" data-t="ban" onclick="setFilter(this)">🔨 Ban</button>
-            <button class="lf" data-t="mute" onclick="setFilter(this)">🔇 Mute</button>
-            <button class="lf" data-t="kick" onclick="setFilter(this)">👢 Kick</button>
-            <button class="lf" data-t="member_join" onclick="setFilter(this)">📥 Join</button>
-            <button class="lf" data-t="member_leave" onclick="setFilter(this)">📤 Leave</button>
-            <button class="lf" data-t="message_delete" onclick="setFilter(this)">🗑️ Suppr.</button>
-            <button class="lf" data-t="message_edit" onclick="setFilter(this)">✏️ Édit.</button>
-            <button class="lf" data-t="warn" onclick="setFilter(this)">⚠️ Warn</button>
-          </div>
-          <div class="log-wrap" id="main-logs" style="max-height:440px"></div>
-        </div>
-      </div>
-
-      <!-- ══ SYSTEM ══ -->
-      <div class="page" id="page-system">
-        <div class="stat-grid sg-3">
-          <div class="stat-card"><div class="sc-label">Statut</div><div class="sc-val" id="sy-status" style="font-size:16px">—</div></div>
-          <div class="stat-card"><div class="sc-label">Uptime</div><div class="sc-val" id="sy-up" style="font-size:16px">—</div></div>
-          <div class="stat-card"><div class="sc-label">Latence</div><div class="sc-val" id="sy-lat">—<span> ms</span></div></div>
-        </div>
-
-        <div class="row-2">
-          <div class="card">
-            <div class="card-head"><div class="card-title">CPU</div></div>
-            <div class="bar-row">
-              <div class="bar-hd"><span class="bar-name">Utilisation globale</span><span class="bar-val" id="sy-cpu-txt">—%</span></div>
-              <div class="bar-track"><div class="bar-fill bg-blue" id="sy-cpu-bar" style="width:0%"></div></div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-head"><div class="card-title">RAM</div></div>
-            <div class="bar-row">
-              <div class="bar-hd"><span class="bar-name">Système</span><span class="bar-val" id="sy-ram-txt">—%</span></div>
-              <div class="bar-track"><div class="bar-fill bg-pu" id="sy-ram-bar" style="width:0%"></div></div>
-            </div>
-            <div class="bar-row">
-              <div class="bar-hd"><span class="bar-name">Processus bot</span><span class="bar-val" id="sy-bot-txt">— MB</span></div>
-              <div class="bar-track"><div class="bar-fill bg-gr" id="sy-bot-bar" style="width:0%"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /shell -->
+  </div><!-- /scroll -->
+</div><!-- /content-wrap -->
+</div><!-- /app -->
 
 <script>
-const BIN_ID = "6a1ab1f521f9ee59d29d3af1";
-const SECRET = "$2a$10$CRqjA9fPegNxt7YQl.fC.eHADynhDeeX4K0mIndHitd3KkPgvRlpu";
+const BIN = "6a1ab1f521f9ee59d29d3af1";
+const KEY = "$2a$10$CRqjA9fPegNxt7YQl.fC.eHADynhDeeX4K0mIndHitd3KkPgvRlpu";
+const TITLES = {home:'Accueil',stats:'Statistiques',logs:'Logs Discord',system:'Système'};
 const REFRESH = 15;
 
-let data = {}, allLogs = [], logFilter = 'ALL', countdown = REFRESH;
-let charts = {};
+let data={}, allLogs=[], lf='ALL', cd=REFRESH, charts={}, sbOpen=true;
 
 // ── Theme ──────────────────────────────────────────────────────
-const savedTheme = localStorage.getItem('theme') || 'dark';
-applyTheme(savedTheme);
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : '');
-  const btn = document.getElementById('theme-btn');
-  const icon = document.getElementById('theme-icon');
-  const lbl = document.getElementById('theme-label');
-  if (btn) btn.classList.toggle('on', t === 'light');
-  if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';
-  if (lbl) lbl.textContent = t === 'light' ? 'Mode clair' : 'Mode sombre';
-  localStorage.setItem('theme', t);
-  if (Object.keys(charts).length) rebuildCharts();
+const initTheme = localStorage.getItem('theme')||'light';
+applyTheme(initTheme);
+function applyTheme(t){
+  document.documentElement.toggleAttribute('data-dark', t==='dark');
+  const tp=document.getElementById('tp'), ic=document.getElementById('th-icon'), lb=document.getElementById('th-lbl');
+  if(tp) tp.classList.toggle('dark-mode', t==='dark');
+  if(ic) ic.textContent = t==='dark'?'☀️':'🌙';
+  if(lb) lb.textContent = t==='dark'?'Mode clair':'Mode sombre';
+  localStorage.setItem('theme',t);
+  rebuildCharts();
 }
-function toggleTheme() {
-  applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light');
+function toggleTheme(){ applyTheme(localStorage.getItem('theme')==='dark'?'light':'dark'); }
+
+// ── Sidebar ──────────────────────────────────────────────────
+function toggleSb(){
+  sbOpen=!sbOpen;
+  document.getElementById('sb').classList.toggle('collapsed',!sbOpen);
 }
 
-// ── Sidebar ────────────────────────────────────────────────────
-let expanded = false;
-function toggleSidebar() {
-  expanded = !expanded;
-  document.getElementById('shell').classList.toggle('expanded', expanded);
-}
-
-// ── Nav ────────────────────────────────────────────────────────
-const PAGE_TITLES = { home:'Accueil', stats:'Statistiques', logs:'Logs Discord', system:'Système' };
-function goto(name, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
+// ── Nav ──────────────────────────────────────────────────────
+function goto(name,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
   el.classList.add('active');
-  document.getElementById('tb-title').textContent = PAGE_TITLES[name] || name;
+  document.getElementById('tb-title').textContent = TITLES[name]||name;
 }
 
-// ── Utils ──────────────────────────────────────────────────────
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmt(v) { return (v||0).toLocaleString(); }
-function setBar(id, pct, cls) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.style.width = Math.min(100, Math.round(pct||0)) + '%';
-  el.className = 'bar-fill ' + cls;
+// ── Utils ─────────────────────────────────────────────────────
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function fmt(v){return(v||0).toLocaleString('fr-FR')}
+function setBar(id,pct,cls){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.width=Math.min(100,Math.round(pct||0))+'%';
+  el.className='bf '+cls;
 }
+function set(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
 
-const TYPE_CLS = {
-  ban:'lt-ban', unban:'lt-join', mute:'lt-mute', unmute:'lt-join',
-  kick:'lt-kick', member_join:'lt-join', member_leave:'lt-leave',
-  message_delete:'lt-del', message_edit:'lt-edit', warn:'lt-warn',
-};
-const TYPE_LABEL = {
-  ban:'BAN', unban:'UNBAN', mute:'MUTE', unmute:'UNMUTE',
-  kick:'KICK', member_join:'JOIN', member_leave:'LEAVE',
-  message_delete:'SUPPR', message_edit:'ÉDIT', warn:'WARN',
-};
+// Log tag
+const TAG_CLS={ban:'tag-ban',mute:'tag-mute',kick:'tag-kick',warn:'tag-warn',member_join:'tag-join',member_leave:'tag-leave',message_delete:'tag-del',message_edit:'tag-edit'};
+const TAG_LBL={ban:'BAN',mute:'MUTE',kick:'KICK',warn:'WARN',member_join:'JOIN',member_leave:'LEAVE',message_delete:'SUPPR',message_edit:'ÉDIT',serveur:'SERVEUR',messages:'MSG',other:'LOG'};
 
-function logHTML(l) {
-  const tc = TYPE_CLS[l.type] || 'lt-other';
-  const tl = TYPE_LABEL[l.type] || (l.type||'').toUpperCase();
-  return `<div class="log-line">
-    <span class="lt">${esc(l.time)}</span>
-    <span class="li">${esc(l.icon||'📋')}</span>
-    <span class="lu">${esc(l.user||'—')}</span>
-    <span class="ld"><span class="ltype ${tc}">${tl}</span> ${esc(l.detail||'')}</span>
+function logHTML(l){
+  const tc=TAG_CLS[l.type]||'tag-other', tl=TAG_LBL[l.type]||(l.type||'LOG').toUpperCase();
+  return `<div class="log-row">
+    <span class="lr-time">${esc(l.time)}</span>
+    <span class="lr-icon">${esc(l.icon||'📋')}</span>
+    <span class="lr-msg">${esc(l.label||'—')}</span>
+    <span class="lr-tag ${tc}">${tl}</span>
   </div>`;
 }
-
-function renderLogs(containerId, logs, filter) {
-  const c = document.getElementById(containerId);
-  if (!c) return;
-  const filtered = filter === 'ALL' ? logs : logs.filter(l => l.type === filter);
-  c.innerHTML = filtered.length
-    ? filtered.map(logHTML).join('')
-    : '<div class="log-empty">Aucun événement' + (filter!=='ALL' ? ' de ce type' : '') + '</div>';
+function renderLogs(cid,logs,filter,max){
+  const c=document.getElementById(cid); if(!c)return;
+  let fl=filter==='ALL'?logs:logs.filter(l=>l.type===filter);
+  if(max)fl=fl.slice(0,max);
+  c.innerHTML=fl.length?fl.map(logHTML).join(''):'<div class="log-empty">Aucun événement</div>';
+}
+function setLF(btn){
+  lf=btn.dataset.t;
+  document.querySelectorAll('.lf').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  renderLogs('main-logs',allLogs,lf);
 }
 
-function setFilter(btn) {
-  logFilter = btn.dataset.t;
-  document.querySelectorAll('.lf').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderLogs('main-logs', allLogs, logFilter);
-}
+// ── Charts ────────────────────────────────────────────────────
+function isDark(){return document.documentElement.hasAttribute('data-dark')}
+function gc(){return isDark()?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.05)'}
+function tc(){return isDark()?'#5a6380':'#8b93a7'}
+function shortD(d){if(!d)return'';const p=d.split('-');return p[2]+'/'+p[1]}
 
-// ── Chart helpers ──────────────────────────────────────────────
-function isDark() { return localStorage.getItem('theme') !== 'light'; }
-function gridColor() { return isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; }
-function textColor() { return isDark() ? '#6b7280' : '#9ca3af'; }
-
-function shortDate(d) {
-  if (!d) return '';
-  const parts = d.split('-');
-  return parts[2] + '/' + parts[1];
-}
-
-function makeChart(id, labels, datasets, type='line') {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
-  if (charts[id]) { charts[id].destroy(); }
-  const ctx = canvas.getContext('2d');
-  charts[id] = new Chart(ctx, {
+function mkChart(id,labels,datasets,type='line'){
+  const canvas=document.getElementById(id); if(!canvas)return;
+  if(charts[id])charts[id].destroy();
+  charts[id]=new Chart(canvas,{
     type,
-    data: { labels: labels.map(shortDate), datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode:'index', intersect:false },
-      plugins: { legend: { labels: { color: textColor(), font:{size:11}, boxWidth:10 } } },
-      scales: {
-        x: { grid:{color:gridColor()}, ticks:{color:textColor(),font:{size:10}} },
-        y: { grid:{color:gridColor()}, ticks:{color:textColor(),font:{size:10}}, beginAtZero:true }
+    data:{labels:labels.map(shortD),datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:tc(),font:{size:11,family:'Inter'},boxWidth:10,padding:12}}},
+      scales:{
+        x:{grid:{color:gc()},ticks:{color:tc(),font:{size:10,family:'Inter'}}},
+        y:{grid:{color:gc()},ticks:{color:tc(),font:{size:10,family:'Inter'}},beginAtZero:true}
       }
     }
   });
 }
 
-function lineDs(label, data, color) {
-  return {
-    label, data,
-    borderColor: color, backgroundColor: color + '18',
-    borderWidth: 2, pointRadius: 3, pointHoverRadius: 5,
-    tension: 0.35, fill: true,
-  };
+function lineDs(label,data,color){
+  return{label,data,borderColor:color,backgroundColor:color+'18',borderWidth:2,
+    pointRadius:3,pointHoverRadius:5,tension:.35,fill:true};
 }
-function barDs(label, data, color) {
-  return { label, data, backgroundColor: color + 'aa', borderRadius:4 };
+function barDs(label,data,color){
+  return{label,data,backgroundColor:color+'bb',borderRadius:6,borderSkipped:false};
 }
 
-function buildCharts() {
-  const c = data.chart;
-  if (!c || !c.labels) return;
-  const L = c.labels;
-
-  makeChart('chart-msg-home', L, [lineDs('Messages', c.messages||[], '#7c6af7')]);
-  makeChart('chart-msg',  L, [lineDs('Messages', c.messages||[], '#60a5fa')]);
-  makeChart('chart-mod',  L, [
-    barDs('Bans',  c.bans||[],  '#f87171'),
-    barDs('Mutes', c.mutes||[], '#fbbf24'),
-    barDs('Kicks', c.kicks||[], '#fb923c'),
-  ], 'bar');
-  makeChart('chart-mod-log', L, [
-    barDs('Bans',  c.bans||[],  '#f87171'),
-    barDs('Mutes', c.mutes||[], '#fbbf24'),
-    barDs('Kicks', c.kicks||[], '#fb923c'),
-    barDs('Warns', c.warns||[], '#a78bfa'),
-  ], 'bar');
-  makeChart('chart-members', L, [
-    lineDs('Arrivées', c.joins||[],  '#34d399'),
-    lineDs('Départs',  c.leaves||[], '#f87171'),
-  ]);
-  makeChart('chart-edits', L, [
-    barDs('Supprimés', c.deleted||[], '#f87171'),
-    barDs('Édités',    c.edited||[],  '#60a5fa'),
-  ], 'bar');
+function buildCharts(){
+  const c=data.chart; if(!c||!c.labels)return;
+  const L=c.labels;
+  mkChart('ch-home-msg',L,[lineDs('Messages',c.messages||[],'#4f6ef7')]);
+  mkChart('ch-msg',L,[lineDs('Messages',c.messages||[],'#4f6ef7')]);
+  mkChart('ch-mod',L,[barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316')],'bar');
+  mkChart('ch-mod-log',L,[barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316'),barDs('Warns',c.warns||[],'#8b5cf6')],'bar');
+  mkChart('ch-mem',L,[lineDs('Arrivées',c.joins||[],'#22c55e'),lineDs('Départs',c.leaves||[],'#ef4444')]);
+  mkChart('ch-edit',L,[barDs('Supprimés',c.deleted||[],'#ef4444'),barDs('Édités',c.edited||[],'#4f6ef7')],'bar');
 }
+function rebuildCharts(){Object.values(charts).forEach(c=>c.destroy());charts={};buildCharts();}
 
-function rebuildCharts() {
-  Object.values(charts).forEach(ch => ch.destroy());
-  charts = {};
-  buildCharts();
-}
+// ── Render ────────────────────────────────────────────────────
+function render(){
+  if(!data||!data.stats)return;
+  const s=data.stats, on=data.online;
 
-// ── Render ─────────────────────────────────────────────────────
-function render() {
-  if (!data || !data.stats) return;
-  const s = data.stats;
-  const online = data.online;
+  // Hero
+  const pill=document.getElementById('h-pill');
+  pill.className='pill '+(on?'pill-on':'pill-off');
+  pill.innerHTML=(on?'<div class="pdot"></div> En ligne':'● Hors ligne');
+  set('h-sub',`${data.guilds||0} serveurs · ${fmt(data.users)} membres · Uptime ${data.uptime||'—'}`);
+  set('h-lat',(data.latency_ms??'—')+' ms');
+  set('h-msg',fmt(s.messages_total));
+  set('h-cpu',Math.round(data.cpu_percent||0)+'%');
+  set('h-ram',Math.round(data.bot_ram_mb||0)+' MB');
+  set('h-upd',data.updated_at||'—');
 
-  // Hero / Home
-  const pill = document.getElementById('h-pill');
-  pill.className = 'pill ' + (online ? 'on' : 'off');
-  pill.textContent = online ? '● En ligne' : '● Hors ligne';
-  setText('h-uptime', data.uptime || '—');
-  setText('h-guilds', data.guilds || 0);
-  setText('h-users', fmt(data.users));
-  setText('h-lat', (data.latency_ms ?? '—') + ' ms');
-  setText('h-msg', fmt(s.messages_total));
-  setText('h-cpu', Math.round(data.cpu_percent||0) + '%');
-  setText('h-ram', Math.round(data.bot_ram_mb||0) + ' MB');
-  setText('h-upd', data.updated_at || '—');
+  // Quick mod
+  set('h-ban',fmt(s.bans_total)); set('h-mute',fmt(s.mutes_total));
+  set('h-kick',fmt(s.kicks_total)); set('h-warn',fmt(s.warns_total||0));
 
-  // Quick stats home
-  setText('qs-bans',  fmt(s.bans_total));
-  setText('qs-mutes', fmt(s.mutes_total));
-  setText('qs-kicks', fmt(s.kicks_total));
-  setText('qs-cmds',  fmt(s.commands_used));
+  // Stats
+  set('s-msg',fmt(s.messages_total)); set('s-cmd',fmt(s.commands_used));
+  set('s-join',fmt(s.members_joined)); set('s-leave',fmt(s.members_left));
+  set('s-ban',fmt(s.bans_total)); set('s-mute',fmt(s.mutes_total));
+  set('s-kick',fmt(s.kicks_total)); set('s-warn',fmt(s.warns_total||0));
+  set('s-tick',fmt(s.tickets_opened)); set('s-del',fmt(s.msg_deleted));
+  set('s-edit',fmt(s.msg_edited));
+  document.getElementById('s-ping').innerHTML=(data.latency_ms??'—')+'<span class="unit"> ms</span>';
 
-  // Stats page
-  setText('st-msg',   fmt(s.messages_total));
-  setText('st-cmd',   fmt(s.commands_used));
-  setText('st-join',  fmt(s.members_joined));
-  setText('st-leave', fmt(s.members_left));
-  setText('st-ban',   fmt(s.bans_total));
-  setText('st-mute',  fmt(s.mutes_total));
-  setText('st-kick',  fmt(s.kicks_total));
-  setText('st-tick',  fmt(s.tickets_opened));
-  setText('st-del',   fmt(s.msg_deleted));
-  setText('st-edit',  fmt(s.msg_edited));
-  setText('st-warn',  fmt(s.warns_total || 0));
-  document.getElementById('st-ping').innerHTML = (data.latency_ms ?? '—') + '<span> ms</span>';
-
-  // Logs page counters
-  setText('lg-ban',  fmt(s.bans_total));
-  setText('lg-mute', fmt(s.mutes_total));
-  setText('lg-kick', fmt(s.kicks_total));
-  setText('lg-warn', fmt(s.warns_total || 0));
+  // Logs counters
+  set('l-ban',fmt(s.bans_total)); set('l-mute',fmt(s.mutes_total));
+  set('l-kick',fmt(s.kicks_total)); set('l-warn',fmt(s.warns_total||0));
 
   // System
-  const syStatus = document.getElementById('sy-status');
-  syStatus.innerHTML = online
-    ? '<span style="color:var(--green)">● En ligne</span>'
-    : '<span style="color:var(--red)">● Hors ligne</span>';
-  setText('sy-up',  data.uptime || '—');
-  document.getElementById('sy-lat').innerHTML = (data.latency_ms ?? '—') + '<span> ms</span>';
-  const cpu = Math.round(data.cpu_percent||0);
-  setText('sy-cpu-txt', cpu + '%');
-  setBar('sy-cpu-bar', cpu, cpu<60?'bg-blue':cpu<80?'bg-ye':'bg-re');
-  const ram = Math.round(data.ram_percent||0);
-  setText('sy-ram-txt', ram + '%');
-  setBar('sy-ram-bar', ram, ram<70?'bg-pu':'bg-re');
-  const botR = Math.round(data.bot_ram_mb||0);
-  setText('sy-bot-txt', botR + ' MB');
-  setBar('sy-bot-bar', Math.min(100, botR/5), 'bg-gr');
+  const syEl=document.getElementById('sy-st');
+  if(syEl)syEl.innerHTML=on?'<span style="color:var(--green)">● En ligne</span>':'<span style="color:var(--red)">● Hors ligne</span>';
+  set('sy-up',data.uptime||'—');
+  document.getElementById('sy-lat').innerHTML=(data.latency_ms??'—')+'<span class="unit"> ms</span>';
+  const cpu=Math.round(data.cpu_percent||0);
+  set('sy-cpu-v',cpu+'%');
+  setBar('sy-cpu-b',cpu,cpu<60?'bf-blue':cpu<80?'bf-yellow':'bf-red');
+  const ram=Math.round(data.ram_percent||0);
+  set('sy-ram-v',ram+'%');
+  setBar('sy-ram-b',ram,ram<70?'bf-purple':'bf-red');
+  const br=Math.round(data.bot_ram_mb||0);
+  set('sy-bot-v',br+' MB');
+  setBar('sy-bot-b',Math.min(100,br/5),'bf-green');
 
   // Logs
-  allLogs = data.logs || [];
-  renderLogs('home-logs', allLogs.slice(0,8), 'ALL');
-  renderLogs('main-logs', allLogs, logFilter);
+  allLogs=data.logs||[];
+  renderLogs('home-logs',allLogs,'ALL',6);
+  renderLogs('main-logs',allLogs,lf);
 
-  // Charts
   buildCharts();
 }
 
-function setText(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = val;
-}
-
-// ── Fetch ──────────────────────────────────────────────────────
-async function fetchData() {
-  try {
-    const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: { 'X-Master-Key': SECRET }
-    });
-    const json = await r.json();
-    data = json.record || {};
+// ── Fetch ─────────────────────────────────────────────────────
+async function fetchData(){
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${BIN}/latest`,{headers:{'X-Master-Key':KEY}});
+    const j=await r.json();
+    data=j.record||{};
     render();
-  } catch(e) { console.error('[Dashboard]', e); }
+  }catch(e){console.error('[Dashboard]',e);}
 }
 
-// ── Countdown ──────────────────────────────────────────────────
+// ── Countdown ─────────────────────────────────────────────────
 fetchData();
-setInterval(() => {
-  countdown--;
-  const d = Math.max(0, countdown);
-  const elTop = document.getElementById('cd-top');
-  const elSide = document.getElementById('cd-side');
-  if (elTop) elTop.textContent = d;
-  if (elSide) elSide.textContent = d + 's';
-  if (countdown <= 0) { countdown = REFRESH; fetchData(); }
-}, 1000);
+setInterval(()=>{
+  cd--;
+  const v=Math.max(0,cd);
+  set('cd-top',v); set('cd-sb',v+'s');
+  if(cd<=0){cd=REFRESH;fetchData();}
+},1000);
 </script>
 </body>
 </html>
