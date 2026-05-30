@@ -3,487 +3,700 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Potatoes Académie — Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<title>Potatoes Académie</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg:#0a0b0d; --bg2:#111318; --bg3:#181c24; --bg4:#1e2330;
-    --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
-    --text:#e8eaf0; --muted:#6b7280; --muted2:#9ca3af;
-    --accent:#7c6af7; --accent2:#a78bfa; --accent3:#ede9fe;
-    --green:#34d399; --red:#f87171; --yellow:#fbbf24; --blue:#60a5fa;
-    --mono:'DM Mono',monospace; --sans:'Syne',sans-serif;
-    --shadow:0 4px 24px rgba(0,0,0,0.4);
-    --radius:12px; --radius-lg:16px;
-  }
-  [data-theme="light"] {
-    --bg:#f4f5f7; --bg2:#ffffff; --bg3:#f9fafb; --bg4:#eef0f4;
-    --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.14);
-    --text:#111318; --muted:#6b7280; --muted2:#9ca3af;
-    --accent:#6d5af0; --accent2:#7c6af7; --accent3:#ede9fe;
-    --green:#059669; --red:#dc2626; --yellow:#d97706; --blue:#2563eb;
-    --shadow:0 4px 24px rgba(0,0,0,0.08);
-  }
-  *{box-sizing:border-box;margin:0;padding:0;transition:background-color .2s,color .2s,border-color .2s}
-  html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
+:root{
+  --bg:#0c0d10;--bg2:#13151b;--bg3:#1a1d26;--bg4:#21253200;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --text:#eceef2;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#7c6af7;--accent2:#a78bfa;
+  --green:#34d399;--red:#f87171;--yellow:#fbbf24;--blue:#60a5fa;--orange:#fb923c;
+  --mono:'DM Mono',monospace;--sans:'Syne',sans-serif;
+  --r:12px;--rl:16px;
+}
+[data-theme=light]{
+  --bg:#f0f2f5;--bg2:#ffffff;--bg3:#f7f8fa;--bg4:#ebedf0;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.13);
+  --text:#111318;--muted:#6b7280;--muted2:#9ca3af;
+  --accent:#6d5af0;--accent2:#7c6af7;
+  --green:#059669;--red:#dc2626;--yellow:#d97706;--blue:#2563eb;--orange:#ea580c;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden}
 
-  .shell{display:grid;grid-template-columns:240px 1fr;height:100vh}
+/* ── Shell ── */
+.shell{display:grid;grid-template-columns:56px 1fr;height:100vh;transition:.3s}
+.shell.expanded{grid-template-columns:230px 1fr}
 
-  /* ── Sidebar ── */
-  .sidebar{
-    background:var(--bg2);border-right:1px solid var(--border);
-    display:flex;flex-direction:column;
-    overflow:hidden;
-  }
-  .sidebar-top{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
-  .bot-card{display:flex;align-items:center;gap:12px}
-  .bot-avatar{
-    width:46px;height:46px;border-radius:14px;
-    border:2px solid var(--accent);
-    object-fit:cover;flex-shrink:0;
-  }
-  .bot-info{flex:1;min-width:0}
-  .bot-name{font-size:15px;font-weight:700;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bot-tag{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
-  .status-dot-wrap{display:flex;align-items:center;gap:5px;margin-top:5px}
-  .sdot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
-  .sdot.offline{background:var(--red)}
-  .sdot.pulse{animation:pulse 2s infinite}
-  .sdot-label{font-size:11px;font-family:var(--mono);color:var(--muted)}
+/* ── Sidebar ── */
+.sidebar{
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+  transition:width .3s;
+}
+.sidebar-brand{
+  height:60px;display:flex;align-items:center;gap:12px;
+  padding:0 14px;border-bottom:1px solid var(--border);flex-shrink:0;overflow:hidden;
+}
+.brand-avatar{
+  width:32px;height:32px;border-radius:9px;object-fit:cover;flex-shrink:0;
+}
+.brand-text{opacity:0;white-space:nowrap;transition:opacity .2s;pointer-events:none}
+.shell.expanded .brand-text{opacity:1}
+.brand-name{font-size:14px;font-weight:700;letter-spacing:-.3px}
+.brand-sub{font-size:10px;color:var(--muted);font-family:var(--mono)}
 
-  .nav-wrap{padding:14px 12px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
-  .nav-section{padding:12px 8px 5px;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);opacity:.7;font-family:var(--mono)}
-  .nav-item{
-    display:flex;align-items:center;gap:10px;
-    padding:9px 10px;cursor:pointer;
-    font-size:13.5px;font-weight:500;color:var(--muted);
-    border-radius:9px;transition:all .15s;
-  }
-  .nav-item:hover{color:var(--text);background:var(--bg4)}
-  .nav-item.active{color:var(--accent2);background:rgba(124,106,247,0.12)}
-  .nav-icon{font-size:16px;width:20px;flex-shrink:0;text-align:center}
+.nav-body{flex:1;overflow:hidden;padding:10px 8px;display:flex;flex-direction:column;gap:2px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px;border-radius:9px;cursor:pointer;
+  color:var(--muted);font-size:13.5px;font-weight:500;
+  white-space:nowrap;overflow:hidden;transition:all .15s;
+  position:relative;
+}
+.nav-item:hover{color:var(--text);background:var(--bg3)}
+.nav-item.active{color:var(--accent2);background:rgba(124,106,247,0.12)}
+.nav-item .ni{font-size:18px;flex-shrink:0;width:20px;text-align:center}
+.nav-label{opacity:0;transition:opacity .15s;pointer-events:none}
+.shell.expanded .nav-label{opacity:1}
 
-  .sidebar-footer{
-    padding:14px 16px;border-top:1px solid var(--border);
-    display:flex;align-items:center;justify-content:space-between;
-  }
-  .refresh-info{font-size:11px;color:var(--muted);font-family:var(--mono);display:flex;align-items:center;gap:6px}
-  .spin{display:inline-block}
-  .spin.spinning{animation:spin .7s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.sidebar-foot{
+  padding:10px 8px;border-top:1px solid var(--border);flex-shrink:0;
+  display:flex;flex-direction:column;gap:6px;
+}
+.foot-row{display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:9px;overflow:hidden;cursor:pointer;transition:background .15s}
+.foot-row:hover{background:var(--bg3)}
+.foot-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center;color:var(--muted)}
+.foot-label{opacity:0;font-size:12px;color:var(--muted);font-family:var(--mono);white-space:nowrap;transition:opacity .15s}
+.shell.expanded .foot-label{opacity:1}
 
-  /* Theme toggle */
-  .theme-btn{
-    width:34px;height:20px;border-radius:20px;
-    background:var(--border2);border:none;cursor:pointer;
-    position:relative;transition:background .2s;flex-shrink:0;
-    display:flex;align-items:center;padding:2px;
-  }
-  .theme-btn.on{background:var(--accent)}
-  .theme-knob{
-    width:16px;height:16px;border-radius:50%;
-    background:#fff;transition:transform .2s;flex-shrink:0;
-  }
-  .theme-btn.on .theme-knob{transform:translateX(14px)}
-  .theme-label{font-size:11px;color:var(--muted);font-family:var(--mono)}
+/* Toggle button */
+.toggle-btn{
+  position:absolute;top:18px;left:calc(56px - 14px);
+  width:24px;height:24px;border-radius:50%;
+  background:var(--bg2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;z-index:10;font-size:12px;color:var(--muted);
+  transition:left .3s,transform .3s;
+}
+.shell.expanded .toggle-btn{left:calc(230px - 14px);transform:rotate(180deg)}
 
-  /* ── Main ── */
-  .main{overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
-  .main::-webkit-scrollbar{width:5px}
-  .main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* ── Main ── */
+.main{overflow-y:auto;display:flex;flex-direction:column;background:var(--bg)}
+.main::-webkit-scrollbar{width:4px}
+.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 
-  .page{display:none;flex-direction:column;gap:20px;animation:fadein .2s}
-  .page.active{display:flex}
-  @keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  .page-header{display:flex;align-items:flex-end;justify-content:space-between}
-  .page-title{font-size:20px;font-weight:700;letter-spacing:-0.4px}
-  .page-sub{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:2px}
-  .updated-tag{font-size:11px;font-family:var(--mono);color:var(--muted);background:var(--bg4);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+/* Topbar */
+.topbar{
+  height:60px;border-bottom:1px solid var(--border);background:var(--bg2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;flex-shrink:0;position:sticky;top:0;z-index:5;
+}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.page-title{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.page-sub{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);
+  background:rgba(52,211,153,0.1);color:var(--green);
+  border:1px solid rgba(52,211,153,0.2);
+}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.countdown-badge{font-size:11px;font-family:var(--mono);color:var(--muted)}
+.theme-toggle{
+  width:36px;height:20px;border-radius:20px;background:var(--border2);
+  border:none;cursor:pointer;position:relative;display:flex;align-items:center;padding:2px;
+}
+.theme-toggle.on{background:var(--accent)}
+.tknob{width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.theme-toggle.on .tknob{transform:translateX(16px)}
 
-  /* Cards */
-  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 22px}
-  .card-title{font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);margin-bottom:14px;font-family:var(--mono)}
+/* Content area */
+.content{padding:24px 28px;flex:1}
+.page{display:none;flex-direction:column;gap:20px;animation:fi .2s}
+.page.active{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 
-  /* Stat grid */
-  .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
-  .stat-card{
-    background:var(--bg2);border:1px solid var(--border);
-    border-radius:var(--radius);padding:16px 18px;
-    display:flex;flex-direction:column;gap:5px;
-    transition:border-color .15s,transform .15s;
-  }
-  .stat-card:hover{border-color:var(--border2);transform:translateY(-1px)}
-  .stat-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px}
-  .stat-value{font-size:26px;font-weight:700;line-height:1;letter-spacing:-1px;color:var(--text)}
-  .stat-value span{font-size:14px;font-weight:500;color:var(--muted)}
-  .stat-icon{font-size:18px;margin-bottom:2px}
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-title{font-size:10px;text-transform:uppercase;letter-spacing:1.3px;color:var(--muted);font-family:var(--mono)}
+.card-action{font-size:11px;font-family:var(--mono);color:var(--accent2);cursor:pointer;padding:3px 8px;border-radius:6px;border:1px solid var(--border2)}
 
-  /* Hero card */
-  .hero-card{
-    background:var(--bg2);border:1px solid var(--border);
-    border-radius:var(--radius-lg);padding:22px 24px;
-    display:grid;grid-template-columns:auto 1fr auto;
-    align-items:center;gap:18px;
-  }
-  .hero-avatar{
-    width:58px;height:58px;border-radius:16px;
-    border:2px solid var(--accent);object-fit:cover;flex-shrink:0;
-  }
-  .hero-info{display:flex;flex-direction:column;gap:3px}
-  .hero-name{font-size:18px;font-weight:700;display:flex;align-items:center;gap:10px}
-  .hero-sub{font-size:12px;color:var(--muted);font-family:var(--mono)}
-  .hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-  .ping-big{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--text)}
-  .ping-big span{font-size:13px;color:var(--muted)}
-  .ping-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px}
+/* Stat grid */
+.stat-grid{display:grid;gap:12px}
+.sg-4{grid-template-columns:repeat(4,1fr)}
+.sg-3{grid-template-columns:repeat(3,1fr)}
+.sg-2{grid-template-columns:repeat(2,1fr)}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 18px;
+  display:flex;flex-direction:column;gap:4px;
+  transition:border-color .15s,transform .15s;
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-1px)}
+.sc-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.7px}
+.sc-val{font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-1px}
+.sc-val span{font-size:13px;font-weight:500;color:var(--muted)}
+.sc-icon{font-size:16px;margin-bottom:2px}
+.sc-delta{font-size:10px;font-family:var(--mono);color:var(--muted);margin-top:1px}
 
-  /* Pill */
-  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;flex-shrink:0}
-  .pill.online{background:rgba(52,211,153,0.12);color:var(--green);border:1px solid rgba(52,211,153,0.25)}
-  .pill.offline{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25)}
-  [data-theme="light"] .pill.online{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
-  [data-theme="light"] .pill.offline{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+/* Hero */
+.hero{
+  background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);
+  padding:20px 24px;display:flex;align-items:center;gap:18px;
+}
+.hero-av{width:52px;height:52px;border-radius:14px;object-fit:cover;flex-shrink:0}
+.hero-info{flex:1}
+.hero-name{font-size:17px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hero-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px}
+.hero-meta{display:flex;gap:18px;margin-top:10px}
+.hm-item{display:flex;flex-direction:column;gap:2px}
+.hm-label{font-size:10px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.7px}
+.hm-val{font-size:15px;font-weight:700;font-family:var(--mono)}
 
-  /* Bars */
-  .sys-row{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
-  .sys-row:last-child{margin-bottom:0}
-  .sys-header{display:flex;justify-content:space-between;align-items:baseline}
-  .sys-name{font-size:13px;font-weight:500}
-  .sys-val{font-size:12px;font-family:var(--mono);color:var(--muted)}
-  .bar-track{height:5px;background:var(--bg4);border-radius:4px;overflow:hidden}
-  .bar-fill{height:100%;border-radius:4px;transition:width .7s ease}
-  .bar-green{background:var(--green)} .bar-yellow{background:var(--yellow)}
-  .bar-red{background:var(--red)} .bar-blue{background:var(--blue)} .bar-purple{background:var(--accent)}
+/* Pill */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-family:var(--mono);font-weight:500;flex-shrink:0}
+.pill.on{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+.pill.off{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+[data-theme=light] .pill.on{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+[data-theme=light] .pill.off{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
 
-  /* Logs */
-  .log-controls{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
-  .log-filter{padding:4px 11px;border-radius:20px;font-size:11px;font-family:var(--mono);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s}
-  .log-filter:hover{color:var(--text)}
-  .log-filter.active{background:rgba(124,106,247,0.15);color:var(--accent2);border-color:var(--accent)}
-  .log-container{max-height:380px;overflow-y:auto;font-family:var(--mono);font-size:11.5px;line-height:1.6;display:flex;flex-direction:column;gap:1px}
-  .log-container::-webkit-scrollbar{width:3px}
-  .log-container::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-  .log-line{display:flex;gap:10px;padding:3px 8px;border-radius:5px;align-items:baseline}
-  .log-line:hover{background:var(--bg4)}
-  .log-time{color:var(--muted);white-space:nowrap;flex-shrink:0;font-size:10.5px}
-  .log-level{font-weight:500;width:52px;flex-shrink:0;text-align:right}
-  .log-msg{color:var(--text);word-break:break-all}
-  .lv-info{color:var(--blue)} .lv-warning{color:var(--yellow)} .lv-error{color:var(--red)} .lv-debug{color:var(--muted)}
-  .log-empty{color:var(--muted);padding:24px 10px;text-align:center;font-family:var(--mono);font-size:12px}
+/* Bars */
+.bar-row{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.bar-row:last-child{margin-bottom:0}
+.bar-hd{display:flex;justify-content:space-between}
+.bar-name{font-size:12px;font-weight:500}
+.bar-val{font-size:11px;font-family:var(--mono);color:var(--muted)}
+.bar-track{height:5px;background:var(--bg3);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .7s ease}
+.bg-blue{background:var(--blue)} .bg-pu{background:var(--accent)} .bg-gr{background:var(--green)} .bg-ye{background:var(--yellow)} .bg-re{background:var(--red)}
 
-  /* Guilds */
-  .guild-row{display:flex;align-items:center;gap:13px;padding:11px 14px;background:var(--bg4);border-radius:10px;margin-bottom:8px}
-  .guild-row:last-child{margin-bottom:0}
-  .guild-icon{width:36px;height:36px;border-radius:50%;background:var(--bg2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--accent2);border:1px solid var(--border)}
-  .guild-icon img{width:100%;height:100%;object-fit:cover}
-  .guild-name{font-size:13.5px;font-weight:600}
-  .guild-members{font-size:11px;font-family:var(--mono);color:var(--muted);margin-top:1px}
-  .guild-id{font-size:10px;font-family:var(--mono);color:var(--muted);margin-left:auto;opacity:.7}
+/* Logs */
+.log-filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.lf{padding:3px 10px;border-radius:20px;font-size:10px;font-family:var(--mono);cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s}
+.lf:hover{color:var(--text)}
+.lf.active{background:rgba(124,106,247,0.15);color:var(--accent2);border-color:var(--accent)}
+.log-wrap{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:1px}
+.log-wrap::-webkit-scrollbar{width:3px}
+.log-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.log-line{display:grid;grid-template-columns:56px 20px 120px 1fr;gap:8px;padding:5px 8px;border-radius:6px;align-items:baseline;font-family:var(--mono);font-size:11px}
+.log-line:hover{background:var(--bg3)}
+.lt{color:var(--muted);font-size:10px}
+.li{font-size:13px;line-height:1}
+.lu{color:var(--text);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ld{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log-empty{color:var(--muted);padding:24px;text-align:center;font-family:var(--mono);font-size:11px}
+
+/* Log type badges */
+.ltype{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:500;white-space:nowrap}
+.lt-ban{background:rgba(248,113,113,.15);color:var(--red)}
+.lt-mute{background:rgba(251,191,36,.15);color:var(--yellow)}
+.lt-kick{background:rgba(251,146,60,.15);color:var(--orange)}
+.lt-join{background:rgba(52,211,153,.15);color:var(--green)}
+.lt-leave{background:rgba(107,114,128,.15);color:var(--muted2)}
+.lt-del{background:rgba(248,113,113,.12);color:var(--red)}
+.lt-edit{background:rgba(96,165,250,.12);color:var(--blue)}
+.lt-warn{background:rgba(251,191,36,.12);color:var(--yellow)}
+.lt-other{background:var(--bg3);color:var(--muted)}
+
+/* Chart */
+.chart-wrap{position:relative;height:200px}
+
+/* Row layouts */
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.row-13{display:grid;grid-template-columns:1fr 2fr;gap:16px}
+
+@media(max-width:900px){.sg-4{grid-template-columns:repeat(2,1fr)}.row-2,.row-3,.row-13{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="shell">
+<div class="shell" id="shell">
 
-  <!-- ── SIDEBAR ── -->
+  <!-- ── Sidebar ── -->
   <aside class="sidebar">
-    <div class="sidebar-top">
-      <div class="bot-card">
-        <img class="bot-avatar" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="PotatoBot" onerror="this.style.display='none'">
-        <div class="bot-info">
-          <div class="bot-name">Potatoes Académie</div>
-          <div class="bot-tag">dashboard</div>
-          <div class="status-dot-wrap">
-            <div class="sdot pulse" id="sdot"></div>
-            <div class="sdot-label" id="sdot-label">Chargement...</div>
-          </div>
-        </div>
+    <div class="sidebar-brand">
+      <img class="brand-avatar" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="PA" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <div class="brand-name">Potatoes Académie</div>
+        <div class="brand-sub">dashboard</div>
       </div>
     </div>
 
-    <div class="nav-wrap">
-      <div class="nav-section">Général</div>
-      <div class="nav-item active" onclick="goto('overview',this)"><span class="nav-icon">📊</span> Vue d'ensemble</div>
-      <div class="nav-item" onclick="goto('stats',this)"><span class="nav-icon">📈</span> Statistiques</div>
-
-      <div class="nav-section">Système</div>
-      <div class="nav-item" onclick="goto('system',this)"><span class="nav-icon">💻</span> CPU / RAM</div>
-      <div class="nav-item" onclick="goto('logs',this)"><span class="nav-icon">🗂</span> Logs en direct</div>
-
-      <div class="nav-section">Discord</div>
-      <div class="nav-item" onclick="goto('guilds',this)"><span class="nav-icon">🌐</span> Serveurs</div>
-    </div>
-
-    <div class="sidebar-footer">
-      <div class="refresh-info">
-        <span class="spin" id="spin">↻</span>
-        <span id="countdown">30s</span>
+    <nav class="nav-body">
+      <div class="nav-item active" onclick="goto('home',this)">
+        <span class="ni">🏠</span><span class="nav-label">Accueil</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="theme-label" id="theme-label">Sombre</span>
-        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" aria-label="Changer de thème">
-          <div class="theme-knob"></div>
-        </button>
+      <div class="nav-item" onclick="goto('stats',this)">
+        <span class="ni">📈</span><span class="nav-label">Statistiques</span>
+      </div>
+      <div class="nav-item" onclick="goto('logs',this)">
+        <span class="ni">📋</span><span class="nav-label">Logs Discord</span>
+      </div>
+      <div class="nav-item" onclick="goto('system',this)">
+        <span class="ni">💻</span><span class="nav-label">Système</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="foot-row" onclick="toggleTheme()">
+        <span class="foot-icon" id="theme-icon">🌙</span>
+        <span class="foot-label" id="theme-label">Mode sombre</span>
+      </div>
+      <div class="foot-row">
+        <span class="foot-icon">↻</span>
+        <span class="foot-label refresh-info">Refresh dans <span id="cd-side">15s</span></span>
       </div>
     </div>
   </aside>
 
-  <!-- ── MAIN ── -->
-  <main class="main">
+  <!-- Toggle sidebar -->
+  <div class="toggle-btn" id="toggle-btn" onclick="toggleSidebar()">›</div>
 
-    <!-- VUE D'ENSEMBLE -->
-    <div class="page active" id="page-overview">
-      <div class="page-header">
-        <div><div class="page-title">Vue d'ensemble</div><div class="page-sub">État temps réel du bot</div></div>
-        <div class="updated-tag" id="updated-at">—</div>
+  <!-- ── Main ── -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div>
+          <div class="page-title" id="tb-title">Accueil</div>
+        </div>
       </div>
+      <div class="topbar-right">
+        <div class="live-badge"><div class="live-dot"></div> Live</div>
+        <div class="countdown-badge">↻ <span id="cd-top">15</span>s</div>
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()"><div class="tknob"></div></button>
+      </div>
+    </div>
 
-      <div class="hero-card">
-        <img class="hero-avatar" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="PotatoBot" onerror="this.style.display='none'">
-        <div class="hero-info">
-          <div class="hero-name">
-            Potatoes Académie
-            <span class="pill online" id="status-pill">● Chargement</span>
+    <div class="content">
+
+      <!-- ══ HOME ══ -->
+      <div class="page active" id="page-home">
+
+        <!-- Hero -->
+        <div class="hero">
+          <img class="hero-av" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="" onerror="this.style.display='none'">
+          <div class="hero-info">
+            <div class="hero-name">
+              Potatoes Académie
+              <span class="pill on" id="h-pill">● Chargement</span>
+            </div>
+            <div class="hero-sub">Uptime : <span id="h-uptime">—</span> &nbsp;·&nbsp; <span id="h-guilds">—</span> serveurs &nbsp;·&nbsp; <span id="h-users">—</span> membres</div>
+            <div class="hero-meta">
+              <div class="hm-item"><div class="hm-label">Latence</div><div class="hm-val" id="h-lat">— ms</div></div>
+              <div class="hm-item"><div class="hm-label">Messages</div><div class="hm-val" id="h-msg">—</div></div>
+              <div class="hm-item"><div class="hm-label">CPU</div><div class="hm-val" id="h-cpu">—%</div></div>
+              <div class="hm-item"><div class="hm-label">RAM bot</div><div class="hm-val" id="h-ram">— MB</div></div>
+              <div class="hm-item"><div class="hm-label">MAJ</div><div class="hm-val" id="h-upd">—</div></div>
+            </div>
           </div>
-          <div class="hero-sub" id="status-uptime">Uptime : —</div>
-          <div class="hero-sub" id="status-guilds">— serveurs · — utilisateurs</div>
         </div>
-        <div class="hero-right">
-          <div class="ping-big" id="latency-val">—<span> ms</span></div>
-          <div class="ping-label">Latence WebSocket</div>
+
+        <!-- Quick stats -->
+        <div class="stat-grid sg-4">
+          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans</div><div class="sc-val" id="qs-bans">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes</div><div class="sc-val" id="qs-mutes">—</div></div>
+          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks</div><div class="sc-val" id="qs-kicks">—</div></div>
+          <div class="stat-card"><div class="sc-icon">⚡</div><div class="sc-label">Commandes</div><div class="sc-val" id="qs-cmds">—</div></div>
+        </div>
+
+        <!-- Chart messages 7j -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Messages — 7 derniers jours</div>
+          </div>
+          <div class="chart-wrap"><canvas id="chart-msg-home"></canvas></div>
+        </div>
+
+        <!-- Derniers logs -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Derniers événements Discord</div>
+            <span class="card-action" onclick="goto('logs', document.querySelectorAll('.nav-item')[2])">Voir tout →</span>
+          </div>
+          <div class="log-wrap" id="home-logs" style="max-height:220px"></div>
         </div>
       </div>
 
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-label">Messages</div><div class="stat-value" id="ov-messages">—</div></div>
-        <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-label">Commandes</div><div class="stat-value" id="ov-commands">—</div></div>
-        <div class="stat-card"><div class="stat-icon">👋</div><div class="stat-label">Arrivées</div><div class="stat-value" id="ov-joined">—</div></div>
-        <div class="stat-card"><div class="stat-icon">🚪</div><div class="stat-label">Départs</div><div class="stat-value" id="ov-left">—</div></div>
-        <div class="stat-card"><div class="stat-icon">🎫</div><div class="stat-label">Tickets</div><div class="stat-value" id="ov-tickets">—</div></div>
-        <div class="stat-card"><div class="stat-icon">🖥</div><div class="stat-label">CPU</div><div class="stat-value" id="ov-cpu">—<span>%</span></div></div>
-      </div>
-    </div>
+      <!-- ══ STATS ══ -->
+      <div class="page" id="page-stats">
+        <div class="stat-grid sg-4">
+          <div class="stat-card"><div class="sc-icon">💬</div><div class="sc-label">Messages</div><div class="sc-val" id="st-msg">—</div></div>
+          <div class="stat-card"><div class="sc-icon">⚡</div><div class="sc-label">Commandes</div><div class="sc-val" id="st-cmd">—</div></div>
+          <div class="stat-card"><div class="sc-icon">👋</div><div class="sc-label">Arrivées</div><div class="sc-val" id="st-join">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🚪</div><div class="sc-label">Départs</div><div class="sc-val" id="st-leave">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans</div><div class="sc-val" id="st-ban">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes</div><div class="sc-val" id="st-mute">—</div></div>
+          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks</div><div class="sc-val" id="st-kick">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🎫</div><div class="sc-label">Tickets</div><div class="sc-val" id="st-tick">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🗑️</div><div class="sc-label">Msg supprimés</div><div class="sc-val" id="st-del">—</div></div>
+          <div class="stat-card"><div class="sc-icon">✏️</div><div class="sc-label">Msg édités</div><div class="sc-val" id="st-edit">—</div></div>
+          <div class="stat-card"><div class="sc-icon">⚠️</div><div class="sc-label">Warns</div><div class="sc-val" id="st-warn">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🏓</div><div class="sc-label">Ping</div><div class="sc-val" id="st-ping">—<span> ms</span></div></div>
+        </div>
 
-    <!-- STATISTIQUES -->
-    <div class="page" id="page-stats">
-      <div class="page-header">
-        <div><div class="page-title">Statistiques</div><div class="page-sub">Compteurs d'activité depuis le démarrage</div></div>
-      </div>
-      <div class="stat-grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr))">
-        <div class="stat-card" style="gap:8px"><div class="stat-label">💬 Messages envoyés</div><div class="stat-value" id="s-messages">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">Total session</div></div>
-        <div class="stat-card" style="gap:8px"><div class="stat-label">⚡ Commandes utilisées</div><div class="stat-value" id="s-commands">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">Slash + préfixe</div></div>
-        <div class="stat-card" style="gap:8px"><div class="stat-label">👋 Membres rejoints</div><div class="stat-value" id="s-joined">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">Session actuelle</div></div>
-        <div class="stat-card" style="gap:8px"><div class="stat-label">🚪 Membres partis</div><div class="stat-value" id="s-left">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">Session actuelle</div></div>
-        <div class="stat-card" style="gap:8px"><div class="stat-label">🎫 Tickets ouverts</div><div class="stat-value" id="s-tickets">—</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">Session actuelle</div></div>
-        <div class="stat-card" style="gap:8px"><div class="stat-label">🏓 Ping Discord</div><div class="stat-value" id="s-latency">—<span> ms</span></div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">WebSocket</div></div>
-      </div>
-    </div>
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Messages / jour</div></div>
+            <div class="chart-wrap"><canvas id="chart-msg"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Modération / jour</div></div>
+            <div class="chart-wrap"><canvas id="chart-mod"></canvas></div>
+          </div>
+        </div>
 
-    <!-- CPU / RAM -->
-    <div class="page" id="page-system">
-      <div class="page-header">
-        <div><div class="page-title">CPU / RAM</div><div class="page-sub">Ressources de l'hébergeur en temps réel</div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Processeur</div>
-        <div class="sys-row">
-          <div class="sys-header"><span class="sys-name">CPU global</span><span class="sys-val" id="cpu-txt">—%</span></div>
-          <div class="bar-track"><div class="bar-fill bar-blue" id="cpu-bar" style="width:0%"></div></div>
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head"><div class="card-title">Membres / jour</div></div>
+            <div class="chart-wrap"><canvas id="chart-members"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">Messages supprimés & édités / jour</div></div>
+            <div class="chart-wrap"><canvas id="chart-edits"></canvas></div>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Mémoire RAM</div>
-        <div class="sys-row">
-          <div class="sys-header"><span class="sys-name">RAM système</span><span class="sys-val" id="ram-txt">—</span></div>
-          <div class="bar-track"><div class="bar-fill bar-purple" id="ram-bar" style="width:0%"></div></div>
-        </div>
-        <div class="sys-row">
-          <div class="sys-header"><span class="sys-name">RAM du bot (processus)</span><span class="sys-val" id="bot-ram-txt">—</span></div>
-          <div class="bar-track"><div class="bar-fill bar-green" id="bot-ram-bar" style="width:0%"></div></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- LOGS -->
-    <div class="page" id="page-logs">
-      <div class="page-header">
-        <div><div class="page-title">Logs en direct</div><div class="page-sub">50 dernières entrées</div></div>
-      </div>
-      <div class="card">
-        <div class="log-controls">
-          <button class="log-filter active" data-level="ALL" onclick="setLogFilter(this)">Tous</button>
-          <button class="log-filter" data-level="INFO" onclick="setLogFilter(this)">INFO</button>
-          <button class="log-filter" data-level="WARNING" onclick="setLogFilter(this)">WARNING</button>
-          <button class="log-filter" data-level="ERROR" onclick="setLogFilter(this)">ERROR</button>
-          <button class="log-filter" data-level="DEBUG" onclick="setLogFilter(this)">DEBUG</button>
+      <!-- ══ LOGS ══ -->
+      <div class="page" id="page-logs">
+        <div class="stat-grid sg-4">
+          <div class="stat-card"><div class="sc-icon">🔨</div><div class="sc-label">Bans total</div><div class="sc-val" id="lg-ban">—</div></div>
+          <div class="stat-card"><div class="sc-icon">🔇</div><div class="sc-label">Mutes total</div><div class="sc-val" id="lg-mute">—</div></div>
+          <div class="stat-card"><div class="sc-icon">👢</div><div class="sc-label">Kicks total</div><div class="sc-val" id="lg-kick">—</div></div>
+          <div class="stat-card"><div class="sc-icon">⚠️</div><div class="sc-label">Warns total</div><div class="sc-val" id="lg-warn">—</div></div>
         </div>
-        <div class="log-container" id="log-container"><div class="log-empty">Chargement des logs...</div></div>
-      </div>
-    </div>
 
-    <!-- SERVEURS -->
-    <div class="page" id="page-guilds">
-      <div class="page-header">
-        <div><div class="page-title">Serveurs Discord</div><div class="page-sub">Serveurs où le bot est présent</div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Résumé</div>
-        <div id="guild-list"><div class="log-empty">Chargement...</div></div>
-      </div>
-    </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">Modération sur 7 jours</div></div>
+          <div class="chart-wrap"><canvas id="chart-mod-log"></canvas></div>
+        </div>
 
-  </main>
-</div>
+        <div class="card">
+          <div class="card-head">
+            <div class="card-title">Journal des événements</div>
+          </div>
+          <div class="log-filters">
+            <button class="lf active" data-t="ALL" onclick="setFilter(this)">Tous</button>
+            <button class="lf" data-t="ban" onclick="setFilter(this)">🔨 Ban</button>
+            <button class="lf" data-t="mute" onclick="setFilter(this)">🔇 Mute</button>
+            <button class="lf" data-t="kick" onclick="setFilter(this)">👢 Kick</button>
+            <button class="lf" data-t="member_join" onclick="setFilter(this)">📥 Join</button>
+            <button class="lf" data-t="member_leave" onclick="setFilter(this)">📤 Leave</button>
+            <button class="lf" data-t="message_delete" onclick="setFilter(this)">🗑️ Suppr.</button>
+            <button class="lf" data-t="message_edit" onclick="setFilter(this)">✏️ Édit.</button>
+            <button class="lf" data-t="warn" onclick="setFilter(this)">⚠️ Warn</button>
+          </div>
+          <div class="log-wrap" id="main-logs" style="max-height:440px"></div>
+        </div>
+      </div>
+
+      <!-- ══ SYSTEM ══ -->
+      <div class="page" id="page-system">
+        <div class="stat-grid sg-3">
+          <div class="stat-card"><div class="sc-label">Statut</div><div class="sc-val" id="sy-status" style="font-size:16px">—</div></div>
+          <div class="stat-card"><div class="sc-label">Uptime</div><div class="sc-val" id="sy-up" style="font-size:16px">—</div></div>
+          <div class="stat-card"><div class="sc-label">Latence</div><div class="sc-val" id="sy-lat">—<span> ms</span></div></div>
+        </div>
+
+        <div class="row-2">
+          <div class="card">
+            <div class="card-head"><div class="card-title">CPU</div></div>
+            <div class="bar-row">
+              <div class="bar-hd"><span class="bar-name">Utilisation globale</span><span class="bar-val" id="sy-cpu-txt">—%</span></div>
+              <div class="bar-track"><div class="bar-fill bg-blue" id="sy-cpu-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div class="card-title">RAM</div></div>
+            <div class="bar-row">
+              <div class="bar-hd"><span class="bar-name">Système</span><span class="bar-val" id="sy-ram-txt">—%</span></div>
+              <div class="bar-track"><div class="bar-fill bg-pu" id="sy-ram-bar" style="width:0%"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-hd"><span class="bar-name">Processus bot</span><span class="bar-val" id="sy-bot-txt">— MB</span></div>
+              <div class="bar-track"><div class="bar-fill bg-gr" id="sy-bot-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /shell -->
 
 <script>
-  const BIN_ID = "6a1ab1f521f9ee59d29d3af1";
-  const SECRET = "$2a$10$CRqjA9fPegNxt7YQl.fC.eHADynhDeeX4K0mIndHitd3KkPgvRlpu";
-  const REFRESH = 30;
+const BIN_ID = "6a1ab1f521f9ee59d29d3af1";
+const SECRET = "$2a$10$CRqjA9fPegNxt7YQl.fC.eHADynhDeeX4K0mIndHitd3KkPgvRlpu";
+const REFRESH = 15;
 
-  let allLogs = [], logFilter = 'ALL', countdown = REFRESH, data = {};
+let data = {}, allLogs = [], logFilter = 'ALL', countdown = REFRESH;
+let charts = {};
 
-  // ── Theme ──
-  const saved = localStorage.getItem('theme') || 'dark';
-  applyTheme(saved);
+// ── Theme ──────────────────────────────────────────────────────
+const savedTheme = localStorage.getItem('theme') || 'dark';
+applyTheme(savedTheme);
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : '');
+  const btn = document.getElementById('theme-btn');
+  const icon = document.getElementById('theme-icon');
+  const lbl = document.getElementById('theme-label');
+  if (btn) btn.classList.toggle('on', t === 'light');
+  if (icon) icon.textContent = t === 'light' ? '☀️' : '🌙';
+  if (lbl) lbl.textContent = t === 'light' ? 'Mode clair' : 'Mode sombre';
+  localStorage.setItem('theme', t);
+  if (Object.keys(charts).length) rebuildCharts();
+}
+function toggleTheme() {
+  applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light');
+}
 
-  function applyTheme(t) {
-    document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : '');
-    const btn = document.getElementById('theme-btn');
-    const lbl = document.getElementById('theme-label');
-    if (btn) { btn.classList.toggle('on', t === 'light'); }
-    if (lbl) lbl.textContent = t === 'light' ? 'Clair' : 'Sombre';
-    localStorage.setItem('theme', t);
-  }
-  function toggleTheme() {
-    const cur = localStorage.getItem('theme') || 'dark';
-    applyTheme(cur === 'dark' ? 'light' : 'dark');
-  }
+// ── Sidebar ────────────────────────────────────────────────────
+let expanded = false;
+function toggleSidebar() {
+  expanded = !expanded;
+  document.getElementById('shell').classList.toggle('expanded', expanded);
+}
 
-  // ── Nav ──
-  function goto(name, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.getElementById('page-' + name).classList.add('active');
-    el.classList.add('active');
-  }
+// ── Nav ────────────────────────────────────────────────────────
+const PAGE_TITLES = { home:'Accueil', stats:'Statistiques', logs:'Logs Discord', system:'Système' };
+function goto(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('tb-title').textContent = PAGE_TITLES[name] || name;
+}
 
-  // ── Fetch ──
-  async function fetchData() {
-    const spin = document.getElementById('spin');
-    spin.classList.add('spinning');
-    try {
-      const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-        headers: { 'X-Master-Key': SECRET }
-      });
-      const json = await r.json();
-      data = json.record;
-      render();
-    } catch(e) { console.error(e); }
-    spin.classList.remove('spinning');
-  }
+// ── Utils ──────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt(v) { return (v||0).toLocaleString(); }
+function setBar(id, pct, cls) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.width = Math.min(100, Math.round(pct||0)) + '%';
+  el.className = 'bar-fill ' + cls;
+}
 
-  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function fmt(v) { return (v || 0).toLocaleString(); }
-  function setBar(id, pct, cls) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.style.width = Math.min(100, Math.round(pct || 0)) + '%';
-    el.className = 'bar-fill ' + cls;
-  }
+const TYPE_CLS = {
+  ban:'lt-ban', unban:'lt-join', mute:'lt-mute', unmute:'lt-join',
+  kick:'lt-kick', member_join:'lt-join', member_leave:'lt-leave',
+  message_delete:'lt-del', message_edit:'lt-edit', warn:'lt-warn',
+};
+const TYPE_LABEL = {
+  ban:'BAN', unban:'UNBAN', mute:'MUTE', unmute:'UNMUTE',
+  kick:'KICK', member_join:'JOIN', member_leave:'LEAVE',
+  message_delete:'SUPPR', message_edit:'ÉDIT', warn:'WARN',
+};
 
-  function render() {
-    if (!data) return;
+function logHTML(l) {
+  const tc = TYPE_CLS[l.type] || 'lt-other';
+  const tl = TYPE_LABEL[l.type] || (l.type||'').toUpperCase();
+  return `<div class="log-line">
+    <span class="lt">${esc(l.time)}</span>
+    <span class="li">${esc(l.icon||'📋')}</span>
+    <span class="lu">${esc(l.user||'—')}</span>
+    <span class="ld"><span class="ltype ${tc}">${tl}</span> ${esc(l.detail||'')}</span>
+  </div>`;
+}
 
-    // Status
-    const online = data.online;
-    const pill = document.getElementById('status-pill');
-    const sdot = document.getElementById('sdot');
-    const sdotLabel = document.getElementById('sdot-label');
-    pill.className = 'pill ' + (online ? 'online' : 'offline');
-    pill.textContent = online ? '● En ligne' : '● Hors ligne';
-    sdot.className = 'sdot' + (online ? ' pulse' : ' offline');
-    sdotLabel.textContent = online ? 'En ligne' : 'Hors ligne';
+function renderLogs(containerId, logs, filter) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  const filtered = filter === 'ALL' ? logs : logs.filter(l => l.type === filter);
+  c.innerHTML = filtered.length
+    ? filtered.map(logHTML).join('')
+    : '<div class="log-empty">Aucun événement' + (filter!=='ALL' ? ' de ce type' : '') + '</div>';
+}
 
-    document.getElementById('status-uptime').textContent = 'Uptime : ' + (data.uptime || '—');
-    document.getElementById('status-guilds').textContent = (data.guilds || 0) + ' serveurs · ' + fmt(data.users) + ' utilisateurs';
-    document.getElementById('latency-val').innerHTML = (data.latency_ms ?? '—') + '<span> ms</span>';
-    document.getElementById('updated-at').textContent = data.updated_at ? '↻ ' + data.updated_at : '—';
+function setFilter(btn) {
+  logFilter = btn.dataset.t;
+  document.querySelectorAll('.lf').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLogs('main-logs', allLogs, logFilter);
+}
 
-    // Stats
-    document.getElementById('ov-messages').innerHTML = fmt(data.messages_total);
-    document.getElementById('ov-commands').innerHTML = fmt(data.commands_used);
-    document.getElementById('ov-joined').innerHTML   = fmt(data.members_joined);
-    document.getElementById('ov-left').innerHTML     = fmt(data.members_left);
-    document.getElementById('ov-tickets').innerHTML  = fmt(data.tickets_opened);
-    document.getElementById('ov-cpu').innerHTML      = Math.round(data.cpu_percent || 0) + '<span>%</span>';
+// ── Chart helpers ──────────────────────────────────────────────
+function isDark() { return localStorage.getItem('theme') !== 'light'; }
+function gridColor() { return isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)'; }
+function textColor() { return isDark() ? '#6b7280' : '#9ca3af'; }
 
-    document.getElementById('s-messages').innerHTML  = fmt(data.messages_total);
-    document.getElementById('s-commands').innerHTML  = fmt(data.commands_used);
-    document.getElementById('s-joined').innerHTML    = fmt(data.members_joined);
-    document.getElementById('s-left').innerHTML      = fmt(data.members_left);
-    document.getElementById('s-tickets').innerHTML   = fmt(data.tickets_opened);
-    document.getElementById('s-latency').innerHTML   = (data.latency_ms ?? '—') + '<span> ms</span>';
+function shortDate(d) {
+  if (!d) return '';
+  const parts = d.split('-');
+  return parts[2] + '/' + parts[1];
+}
 
-    // System
-    const cpu = Math.round(data.cpu_percent || 0);
-    document.getElementById('cpu-txt').textContent = cpu + '%';
-    setBar('cpu-bar', cpu, cpu < 60 ? 'bar-blue' : cpu < 80 ? 'bar-yellow' : 'bar-red');
-
-    const ram = Math.round(data.ram_percent || 0);
-    document.getElementById('ram-txt').textContent = ram + '%';
-    setBar('ram-bar', ram, ram < 70 ? 'bar-purple' : 'bar-red');
-
-    const botRam = Math.round(data.bot_ram_mb || 0);
-    document.getElementById('bot-ram-txt').textContent = botRam + ' MB';
-    setBar('bot-ram-bar', Math.min(100, botRam / 5), 'bar-green');
-
-    // Logs
-    allLogs = data.logs || [];
-    renderLogs();
-
-    // Guilds
-    const gc = document.getElementById('guild-list');
-    gc.innerHTML = `
-      <div class="guild-row">
-        <div class="guild-icon">🥔</div>
-        <div>
-          <div class="guild-name">Potatoes Académie Bot</div>
-          <div class="guild-members">${fmt(data.users)} utilisateurs sur ${data.guilds || 0} serveur(s)</div>
-        </div>
-      </div>`;
-  }
-
-  function renderLogs() {
-    const container = document.getElementById('log-container');
-    const filtered = logFilter === 'ALL' ? allLogs : allLogs.filter(l => l.level === logFilter);
-    if (!filtered.length) {
-      container.innerHTML = '<div class="log-empty">Aucun log' + (logFilter !== 'ALL' ? ' de niveau ' + logFilter : '') + '</div>';
-      return;
+function makeChart(id, labels, datasets, type='line') {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  if (charts[id]) { charts[id].destroy(); }
+  const ctx = canvas.getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type,
+    data: { labels: labels.map(shortDate), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: { legend: { labels: { color: textColor(), font:{size:11}, boxWidth:10 } } },
+      scales: {
+        x: { grid:{color:gridColor()}, ticks:{color:textColor(),font:{size:10}} },
+        y: { grid:{color:gridColor()}, ticks:{color:textColor(),font:{size:10}}, beginAtZero:true }
+      }
     }
-    container.innerHTML = filtered.map(l =>
-      `<div class="log-line">
-        <span class="log-time">${esc(l.time)}</span>
-        <span class="log-level lv-${(l.level||'').toLowerCase()}">${esc(l.level)}</span>
-        <span class="log-msg">${esc(l.message)}</span>
-      </div>`
-    ).join('');
-  }
+  });
+}
 
-  function setLogFilter(btn) {
-    logFilter = btn.dataset.level;
-    document.querySelectorAll('.log-filter').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderLogs();
-  }
+function lineDs(label, data, color) {
+  return {
+    label, data,
+    borderColor: color, backgroundColor: color + '18',
+    borderWidth: 2, pointRadius: 3, pointHoverRadius: 5,
+    tension: 0.35, fill: true,
+  };
+}
+function barDs(label, data, color) {
+  return { label, data, backgroundColor: color + 'aa', borderRadius:4 };
+}
 
-  // ── Auto refresh ──
-  fetchData();
-  setInterval(() => {
-    countdown--;
-    document.getElementById('countdown').textContent = countdown + 's';
-    if (countdown <= 0) { countdown = REFRESH; fetchData(); }
-  }, 1000);
+function buildCharts() {
+  const c = data.chart;
+  if (!c || !c.labels) return;
+  const L = c.labels;
+
+  makeChart('chart-msg-home', L, [lineDs('Messages', c.messages||[], '#7c6af7')]);
+  makeChart('chart-msg',  L, [lineDs('Messages', c.messages||[], '#60a5fa')]);
+  makeChart('chart-mod',  L, [
+    barDs('Bans',  c.bans||[],  '#f87171'),
+    barDs('Mutes', c.mutes||[], '#fbbf24'),
+    barDs('Kicks', c.kicks||[], '#fb923c'),
+  ], 'bar');
+  makeChart('chart-mod-log', L, [
+    barDs('Bans',  c.bans||[],  '#f87171'),
+    barDs('Mutes', c.mutes||[], '#fbbf24'),
+    barDs('Kicks', c.kicks||[], '#fb923c'),
+    barDs('Warns', c.warns||[], '#a78bfa'),
+  ], 'bar');
+  makeChart('chart-members', L, [
+    lineDs('Arrivées', c.joins||[],  '#34d399'),
+    lineDs('Départs',  c.leaves||[], '#f87171'),
+  ]);
+  makeChart('chart-edits', L, [
+    barDs('Supprimés', c.deleted||[], '#f87171'),
+    barDs('Édités',    c.edited||[],  '#60a5fa'),
+  ], 'bar');
+}
+
+function rebuildCharts() {
+  Object.values(charts).forEach(ch => ch.destroy());
+  charts = {};
+  buildCharts();
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function render() {
+  if (!data || !data.stats) return;
+  const s = data.stats;
+  const online = data.online;
+
+  // Hero / Home
+  const pill = document.getElementById('h-pill');
+  pill.className = 'pill ' + (online ? 'on' : 'off');
+  pill.textContent = online ? '● En ligne' : '● Hors ligne';
+  setText('h-uptime', data.uptime || '—');
+  setText('h-guilds', data.guilds || 0);
+  setText('h-users', fmt(data.users));
+  setText('h-lat', (data.latency_ms ?? '—') + ' ms');
+  setText('h-msg', fmt(s.messages_total));
+  setText('h-cpu', Math.round(data.cpu_percent||0) + '%');
+  setText('h-ram', Math.round(data.bot_ram_mb||0) + ' MB');
+  setText('h-upd', data.updated_at || '—');
+
+  // Quick stats home
+  setText('qs-bans',  fmt(s.bans_total));
+  setText('qs-mutes', fmt(s.mutes_total));
+  setText('qs-kicks', fmt(s.kicks_total));
+  setText('qs-cmds',  fmt(s.commands_used));
+
+  // Stats page
+  setText('st-msg',   fmt(s.messages_total));
+  setText('st-cmd',   fmt(s.commands_used));
+  setText('st-join',  fmt(s.members_joined));
+  setText('st-leave', fmt(s.members_left));
+  setText('st-ban',   fmt(s.bans_total));
+  setText('st-mute',  fmt(s.mutes_total));
+  setText('st-kick',  fmt(s.kicks_total));
+  setText('st-tick',  fmt(s.tickets_opened));
+  setText('st-del',   fmt(s.msg_deleted));
+  setText('st-edit',  fmt(s.msg_edited));
+  setText('st-warn',  fmt(s.warns_total || 0));
+  document.getElementById('st-ping').innerHTML = (data.latency_ms ?? '—') + '<span> ms</span>';
+
+  // Logs page counters
+  setText('lg-ban',  fmt(s.bans_total));
+  setText('lg-mute', fmt(s.mutes_total));
+  setText('lg-kick', fmt(s.kicks_total));
+  setText('lg-warn', fmt(s.warns_total || 0));
+
+  // System
+  const syStatus = document.getElementById('sy-status');
+  syStatus.innerHTML = online
+    ? '<span style="color:var(--green)">● En ligne</span>'
+    : '<span style="color:var(--red)">● Hors ligne</span>';
+  setText('sy-up',  data.uptime || '—');
+  document.getElementById('sy-lat').innerHTML = (data.latency_ms ?? '—') + '<span> ms</span>';
+  const cpu = Math.round(data.cpu_percent||0);
+  setText('sy-cpu-txt', cpu + '%');
+  setBar('sy-cpu-bar', cpu, cpu<60?'bg-blue':cpu<80?'bg-ye':'bg-re');
+  const ram = Math.round(data.ram_percent||0);
+  setText('sy-ram-txt', ram + '%');
+  setBar('sy-ram-bar', ram, ram<70?'bg-pu':'bg-re');
+  const botR = Math.round(data.bot_ram_mb||0);
+  setText('sy-bot-txt', botR + ' MB');
+  setBar('sy-bot-bar', Math.min(100, botR/5), 'bg-gr');
+
+  // Logs
+  allLogs = data.logs || [];
+  renderLogs('home-logs', allLogs.slice(0,8), 'ALL');
+  renderLogs('main-logs', allLogs, logFilter);
+
+  // Charts
+  buildCharts();
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ── Fetch ──────────────────────────────────────────────────────
+async function fetchData() {
+  try {
+    const r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': SECRET }
+    });
+    const json = await r.json();
+    data = json.record || {};
+    render();
+  } catch(e) { console.error('[Dashboard]', e); }
+}
+
+// ── Countdown ──────────────────────────────────────────────────
+fetchData();
+setInterval(() => {
+  countdown--;
+  const d = Math.max(0, countdown);
+  const elTop = document.getElementById('cd-top');
+  const elSide = document.getElementById('cd-side');
+  if (elTop) elTop.textContent = d;
+  if (elSide) elSide.textContent = d + 's';
+  if (countdown <= 0) { countdown = REFRESH; fetchData(); }
+}, 1000);
 </script>
 </body>
 </html>
