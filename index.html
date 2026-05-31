@@ -273,7 +273,6 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 <!-- ── Sidebar ── -->
 <div class="sb-zone">
 <aside class="sb" id="sb">
-  <div class="sb-pin" id="sb-pin" onclick="togglePin()" title="Épingler">📌</div>
   <div class="sb-brand">
     <img class="sb-logo" src="https://cdn.discordapp.com/attachments/1235643284991381618/1510232930742439976/ec355907cea67d8071f1558fe03415b3.png?ex=6a1c1185&is=6a1ac005&hm=ddd6dbe5b12904dbdcb6cbb3e5f8b552feb9d660bb76635833c5292a81c33a76&" alt="" onerror="this.style.display='none'">
     <div class="sb-txt"><div class="sb-name">Potatoes Académie</div><div class="sb-sub">DASHBOARD</div></div>
@@ -742,28 +741,15 @@ function mkChart(id, labels, datasets, type='line'){
 }
 function lineDs(label,data,color){ return{label,data,borderColor:color,backgroundColor:color+'18',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.4,fill:true} }
 function barDs(label,data,color){ return{label,data,backgroundColor:color+'cc',borderRadius:5,borderSkipped:false} }
-
-function chartFingerprint(c){
-  if(!c) return '';
-  return JSON.stringify({
-    labels:c.labels,messages:c.messages,bans:c.bans,mutes:c.mutes,
-    kicks:c.kicks,warns:c.warns,joins:c.joins,leaves:c.leaves,
-    deleted:c.deleted,edited:c.edited
-  });
-}
-let lastChartFingerprint = '';
-
-function rebuildCharts(){ lastChartFingerprint=''; Object.values(charts).forEach(c=>c.destroy()); charts={}; if(data.chart) buildCharts(); }
+function rebuildCharts(){ Object.values(charts).forEach(c=>c.destroy()); charts={}; if(data.chart) buildCharts(); }
 
 function buildCharts(){
   const c=data.chart; if(!c||!c.labels) return;
-  const fp = chartFingerprint(c);
-  if(fp === lastChartFingerprint) return;
-  lastChartFingerprint = fp;
   mkChart('ch-hm',   c.labels, [lineDs('Messages',c.messages||[],'#4f6ef7')]);
   mkChart('ch-hmod', c.labels, [barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316')],'bar');
   mkChart('ch-ml',   c.labels, [barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316'),barDs('Warns',c.warns||[],'#8b5cf6')],'bar');
   chartDefs[activeChart].build(c);
+  // Init hidden canvases
   Object.keys(chartDefs).forEach(k=>{ if(k!==activeChart) chartDefs[k].build(c); });
   Object.keys(chartDefs).forEach(k=>{
     const el=document.getElementById(chartDefs[k].id);
@@ -833,22 +819,16 @@ async function fetchData(){
 }
 
 // ── Countdown ─────────────────────────────────────────────
-function updateCd(v){
-  const a=document.getElementById('cd-top'), b=document.getElementById('cd-sb');
-  if(a) a.textContent=v;
-  if(b) b.textContent=v+'s';
-}
-
 setInterval(()=>{
-  cd = Math.max(0, cd-1);
-  updateCd(cd);
+  cd--; const v=Math.max(0,cd);
+  set('cd-top',v); set('cd-sb',v+'s');
   if(cd<=0){ cd=REFRESH; fetchData(); }
 },1000);
 
 // ── Init ──────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded',()=>{
-  updateCd(cd);
-  fetchData();
+fetchData();
+// Restaurer la page après F5
+window.addEventListener('load',()=>{
   const pg = sessionStorage.getItem('page')||'home';
   const el = [...document.querySelectorAll('.sb-item')].find(e=>e.getAttribute('onclick')?.includes("'"+pg+"'"));
   if(el && pg!=='home') goto(pg, el);
