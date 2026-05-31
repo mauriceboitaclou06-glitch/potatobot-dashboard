@@ -741,10 +741,30 @@ function mkChart(id, labels, datasets, type='line'){
 }
 function lineDs(label,data,color){ return{label,data,borderColor:color,backgroundColor:color+'18',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.4,fill:true} }
 function barDs(label,data,color){ return{label,data,backgroundColor:color+'cc',borderRadius:5,borderSkipped:false} }
-function rebuildCharts(){ Object.values(charts).forEach(c=>c.destroy()); charts={}; if(data.chart) buildCharts(); }
+function rebuildCharts(){ lastChartFingerprint=''; Object.values(charts).forEach(c=>c.destroy()); charts={}; if(data.chart) buildCharts(); }
+
+function chartFingerprint(c){
+  if(!c) return '';
+  return JSON.stringify({
+    labels: c.labels,
+    messages: c.messages,
+    bans: c.bans,
+    mutes: c.mutes,
+    kicks: c.kicks,
+    warns: c.warns,
+    joins: c.joins,
+    leaves: c.leaves,
+    deleted: c.deleted,
+    edited: c.edited
+  });
+}
+let lastChartFingerprint = '';
 
 function buildCharts(){
   const c=data.chart; if(!c||!c.labels) return;
+  const fp = chartFingerprint(c);
+  if(fp === lastChartFingerprint) return; // rien de nouveau, on ne redessine pas
+  lastChartFingerprint = fp;
   mkChart('ch-hm',   c.labels, [lineDs('Messages',c.messages||[],'#4f6ef7')]);
   mkChart('ch-hmod', c.labels, [barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316')],'bar');
   mkChart('ch-ml',   c.labels, [barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316'),barDs('Warns',c.warns||[],'#8b5cf6')],'bar');
