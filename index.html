@@ -31,13 +31,13 @@
 }
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--sans);overflow:hidden;font-size:14px;-webkit-font-smoothing:antialiased}
 .app{display:flex;height:100vh}
- 
+
 /* ── Sidebar ── */
 .sb-zone{position:relative;flex-shrink:0;z-index:20;display:flex}
 .sb{
   position:relative;left:0;top:0;height:100vh;
   width:52px;
-  background:var(--sf);border-right:1px solid var(--bd);
+  background:#F1F3F7;border-right:1px solid var(--bd);
   display:flex;flex-direction:column;
   transition:width .25s cubic-bezier(.4,0,.2,1),box-shadow .25s;
   overflow:hidden;
@@ -45,7 +45,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 }
 .sb:hover,.sb.pinned{width:220px;box-shadow:4px 0 24px rgba(0,0,0,.1)}
 [data-dark] .sb:hover,[data-dark] .sb.pinned{box-shadow:4px 0 24px rgba(0,0,0,.4)}
-.sb-brand{height:60px;display:flex;align-items:center;gap:11px;padding:0 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.sb-brand{height:60px;display:flex;align-items:center;gap:11px;padding:0 14px;border-bottom:1px solid var(--bd);flex-shrink:0;background:#F1F3F7}
 .sb-logo{width:32px;height:32px;border-radius:9px;flex-shrink:0;object-fit:cover}
 .sb-txt{white-space:nowrap;overflow:hidden;opacity:0;transition:opacity .15s .05s;pointer-events:none}
 .sb:hover .sb-txt,.sb.pinned .sb-txt{opacity:1}
@@ -53,7 +53,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .sb-sub{font-size:10px;color:var(--mu);letter-spacing:.3px}
 .sb-nav{flex:1;padding:10px 8px;display:flex;flex-direction:column;gap:2px;overflow:hidden}
 .sb-item{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:var(--r);cursor:pointer;color:var(--mu);font-size:13px;font-weight:500;white-space:nowrap;transition:all .15s;position:relative}
-.sb-item:hover{color:var(--tx);background:var(--sf2)}
+.sb-item:hover{color:var(--tx);background:rgba(0,0,0,.06)}
 .sb-item.act{color:var(--ac);background:var(--acl);font-weight:600}
 .sb-ic{font-size:17px;flex-shrink:0;width:20px;text-align:center}
 .sb-lb{overflow:hidden;opacity:0;transition:opacity .15s .05s;pointer-events:none}
@@ -62,13 +62,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .sb:hover .sb-badge,.sb.pinned .sb-badge{opacity:1}
 .sb-foot{padding:8px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .sb-fi{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--r);cursor:pointer;color:var(--mu);font-size:12px;white-space:nowrap;transition:all .15s}
-.sb-fi:hover{color:var(--tx);background:var(--sf2)}
+.sb-fi:hover{color:var(--tx);background:rgba(0,0,0,.06)}
 .sb-fi .sb-ic{font-size:15px}
 /* Pin button */
-.sb-pin{position:absolute;top:18px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--sf);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--mu);opacity:0;transition:opacity .15s;z-index:21}
+.sb-pin{position:absolute;top:18px;right:6px;width:22px;height:22px;border-radius:50%;background:#F1F3F7;border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--mu);opacity:0;transition:opacity .15s;z-index:21}
 .sb:hover .sb-pin{opacity:1}
 .sb.pinned .sb-pin{opacity:1;background:var(--acl);color:var(--ac);border-color:var(--ac)}
- 
+
 /* ── Topbar ── */
 .wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .topbar{height:60px;border-bottom:1px solid var(--bd);background:var(--sf);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0}
@@ -85,7 +85,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .th-pill.on{background:var(--ac)}
 .th-k{width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .th-pill.on .th-k{transform:translateX(20px)}
- 
+
 /* ── Content ── */
 .scroll{overflow-y:auto;flex:1;padding:22px 26px}
 .scroll::-webkit-scrollbar{width:4px}
@@ -93,14 +93,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .page{display:none;flex-direction:column;gap:18px;animation:fi .2s}
 .page.act{display:flex}
 @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
- 
+
 /* ── Cards ── */
 .card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:18px 20px;box-shadow:var(--sh)}
 .ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .ct{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--mu)}
 .ca{font-size:11px;color:var(--ac);font-weight:600;cursor:pointer;padding:3px 9px;border-radius:6px;border:1px solid var(--acl);background:var(--acl);transition:all .15s}
 .ca:hover{background:var(--ac);color:#fff;border-color:var(--ac)}
- 
+
 /* ── Stat grid ── */
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -122,7 +122,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .cv-yellow .sc-ico{background:var(--yel);color:var(--ye)}
 .cv-purple .sc-ico{background:var(--pul);color:var(--pu)}
 .cv-orange .sc-ico{background:var(--orl);color:var(--or)}
- 
+
 /* ── Hero ── */
 .hero{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rl);padding:20px 24px;display:flex;align-items:center;gap:18px;box-shadow:var(--sh)}
 .hero-av{width:50px;height:50px;border-radius:12px;object-fit:cover;flex-shrink:0}
@@ -136,7 +136,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .p-on{background:var(--grl);color:var(--gr);border:1px solid rgba(34,197,94,.2)}
 .p-off{background:var(--rel);color:var(--re);border:1px solid rgba(239,68,68,.2)}
 .pdot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite}
- 
+
 /* ── Charts ── */
 .chart-box{position:relative;height:200px}
 .chart-box.tall{height:240px}
@@ -144,7 +144,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .ctab{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--mu);transition:all .15s}
 .ctab:hover{color:var(--tx);border-color:var(--bd2)}
 .ctab.act{background:var(--acl);color:var(--ac);border-color:var(--ac)}
- 
+
 /* ── Bars ── */
 .br{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
 .br:last-child{margin-bottom:0}
@@ -154,7 +154,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .br-tr{height:6px;background:var(--sf2);border-radius:4px;overflow:hidden}
 .bf{height:100%;border-radius:4px;transition:width .7s ease}
 .bf-bl{background:var(--ac)} .bf-gr{background:var(--gr)} .bf-ye{background:var(--ye)} .bf-re{background:var(--re)} .bf-pu{background:var(--pu)}
- 
+
 /* ── Logs ── */
 .lf-wr{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
 .lf{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--mu);transition:all .15s}
@@ -175,13 +175,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .tg-del{background:var(--rel);color:var(--re)} .tg-edit{background:var(--acl);color:var(--ac)}
 .tg-other{background:var(--sf2);color:var(--mu)}
 .log-empty{padding:24px;text-align:center;color:var(--mu);font-size:12px;font-weight:500}
- 
+
 /* ── Search ── */
 .search-wr{position:relative;margin-bottom:12px}
 .search-in{width:100%;padding:8px 12px 8px 34px;border-radius:8px;border:1px solid var(--bd);background:var(--sf2);color:var(--tx);font-size:12px;font-family:var(--sans);outline:none;transition:border-color .15s}
 .search-in:focus{border-color:var(--ac)}
 .search-ic{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:13px;pointer-events:none}
- 
+
 /* ── Tickets ── */
 .ticket-list{display:flex;flex-direction:column;gap:8px}
 .tkt{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s,background .15s}
@@ -194,7 +194,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .tkt:hover .tkt-arr{transform:translateX(3px);color:var(--ac)}
 .badge-type{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--acl);color:var(--ac)}
 .badge-claim{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--grl);color:var(--gr)}
- 
+
 /* ── Ticket Modal ── */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);animation:fi .15s}
 .modal-bg.hidden{display:none}
@@ -237,14 +237,27 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .reply-send:hover{background:var(--ac2)}
 .reply-send:disabled{opacity:.5;cursor:not-allowed}
 .reply-hint{font-size:10px;color:var(--mu);margin-top:6px;text-align:center}
- 
+
+/* ── Settings ── */
+.settings-section{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.settings-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:4px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);gap:16px;transition:border-color .15s}
+.setting-row:hover{border-color:var(--bd2)}
+.setting-info{display:flex;flex-direction:column;gap:3px}
+.setting-label{font-size:13px;font-weight:600;color:var(--tx)}
+.setting-desc{font-size:11px;color:var(--mu);line-height:1.4}
+.sb-mode-opts{display:flex;gap:8px;flex-shrink:0}
+.sb-mode-btn{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:transparent;color:var(--mu);transition:all .15s;white-space:nowrap}
+.sb-mode-btn:hover{border-color:var(--bd2);color:var(--tx)}
+.sb-mode-btn.act{background:var(--acl);color:var(--ac);border-color:var(--ac)}
+
 @media(max-width:1100px){.g4{grid-template-columns:repeat(2,1fr)}.g12{grid-template-columns:1fr}}
 @media(max-width:800px){.g4,.g3,.g2,.g12{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
- 
+
 <!-- ── Sidebar ── -->
 <div class="sb-zone">
 <aside class="sb" id="sb">
@@ -259,6 +272,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
     <div class="sb-item" onclick="goto('logs',this)"><span class="sb-ic">📋</span><span class="sb-lb">Logs Discord</span></div>
     <div class="sb-item" onclick="goto('tickets',this)" id="sb-tickets"><span class="sb-ic">🎫</span><span class="sb-lb">Tickets</span></div>
     <div class="sb-item" onclick="goto('system',this)"><span class="sb-ic">💻</span><span class="sb-lb">Système</span></div>
+    <div class="sb-item" onclick="goto('settings',this)"><span class="sb-ic">⚙️</span><span class="sb-lb">Paramètres</span></div>
   </nav>
   <div class="sb-foot">
     <div class="sb-fi" onclick="toggleTheme()"><span class="sb-ic" id="th-ic">🌙</span><span class="sb-lb" id="th-lb">Mode sombre</span></div>
@@ -266,7 +280,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
   </div>
 </aside>
 </div>
- 
+
 <!-- ── Ticket Modal ── -->
 <div class="modal-bg hidden" id="modal-bg" onclick="closeModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
@@ -291,7 +305,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
     </div>
   </div>
 </div>
- 
+
 <!-- ── Main ── -->
 <div class="wrap">
   <div class="topbar">
@@ -304,9 +318,9 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
       <button class="th-pill" id="tp" onclick="toggleTheme()"><div class="th-k"></div></button>
     </div>
   </div>
- 
+
   <div class="scroll" id="scroll-area">
- 
+
     <!-- ══ HOME ══ -->
     <div class="page act" id="page-home">
       <div class="hero">
@@ -324,14 +338,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
           </div>
         </div>
       </div>
- 
+
       <div class="g4">
         <div class="sc cv-red"><div class="sc-top"><span class="sc-lbl">Bans</span><div class="sc-ico">🔨</div></div><div class="sc-val" id="h-ban">—</div><div class="sc-sub">Session</div></div>
         <div class="sc cv-yellow"><div class="sc-top"><span class="sc-lbl">Mutes</span><div class="sc-ico">🔇</div></div><div class="sc-val" id="h-mute">—</div><div class="sc-sub">Session</div></div>
         <div class="sc cv-orange"><div class="sc-top"><span class="sc-lbl">Kicks</span><div class="sc-ico">👢</div></div><div class="sc-val" id="h-kick">—</div><div class="sc-sub">Session</div></div>
         <div class="sc cv-purple"><div class="sc-top"><span class="sc-lbl">Warns</span><div class="sc-ico">⚠️</div></div><div class="sc-val" id="h-warn">—</div><div class="sc-sub">Session</div></div>
       </div>
- 
+
       <div class="g2">
         <div class="card">
           <div class="ch"><div class="ct">Messages — 7 jours</div></div>
@@ -342,13 +356,13 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
           <div class="chart-box tall"><canvas id="ch-hmod"></canvas></div>
         </div>
       </div>
- 
+
       <div class="card">
         <div class="ch"><div class="ct">Derniers événements</div><span class="ca" onclick="goto('logs',document.querySelectorAll('.sb-item')[2])">Voir tout →</span></div>
         <div class="log-ls" id="home-logs" style="max-height:180px"></div>
       </div>
     </div>
- 
+
     <!-- ══ STATS ══ -->
     <div class="page" id="page-stats">
       <div class="g4">
@@ -365,7 +379,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
         <div class="sc cv-blue"><div class="sc-top"><span class="sc-lbl">Msg édités</span><div class="sc-ico">✏️</div></div><div class="sc-val" id="s-edit">—</div></div>
         <div class="sc cv-green"><div class="sc-top"><span class="sc-lbl">Ping</span><div class="sc-ico">🏓</div></div><div class="sc-val" id="s-ping">—<span class="u"> ms</span></div></div>
       </div>
- 
+
       <div class="card">
         <div class="ch">
           <div class="ct">Graphiques détaillés</div>
@@ -384,7 +398,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
         </div>
       </div>
     </div>
- 
+
     <!-- ══ LOGS ══ -->
     <div class="page" id="page-logs">
       <div class="g4">
@@ -411,7 +425,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
         <div class="log-ls" id="main-logs" style="max-height:440px"></div>
       </div>
     </div>
- 
+
     <!-- ══ TICKETS ══ -->
     <div class="page" id="page-tickets">
       <div class="g3" id="tkt-stats">
@@ -424,7 +438,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
         <div class="ticket-list" id="ticket-list"><div class="log-empty">Chargement des tickets...</div></div>
       </div>
     </div>
- 
+
     <!-- ══ SYSTEM ══ -->
     <div class="page" id="page-system">
       <div class="g3">
@@ -444,24 +458,51 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
         </div>
       </div>
     </div>
- 
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="settings-section">
+        <div class="settings-section-title">🎛️ Barre latérale</div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Comportement de la barre</div>
+            <div class="setting-desc">Choisissez si la barre reste ouverte en permanence ou s'étend uniquement au survol de la souris.</div>
+          </div>
+          <div class="sb-mode-opts">
+            <button class="sb-mode-btn act" id="mode-hover" onclick="setSbMode('hover',this)">🖱️ Hover</button>
+            <button class="sb-mode-btn" id="mode-pinned" onclick="setSbMode('pinned',this)">📌 Toujours ouverte</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">🎨 Apparence</div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-label">Thème</div>
+            <div class="setting-desc">Basculez entre le mode clair et le mode sombre.</div>
+          </div>
+          <button class="th-pill" id="tp2" onclick="toggleTheme()" style="flex-shrink:0"><div class="th-k"></div></button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /scroll -->
 </div><!-- /wrap -->
 </div><!-- /app -->
- 
+
 <script>
 const BIN = "6a1ab1f521f9ee59d29d3af1";
 const KEY = "$2a$10$CRqjA9fPegNxt7YQl.fC.eHADynhDeeX4K0mIndHitd3KkPgvRlpu";
 const REPLY_BIN = "6a1ab1f521f9ee59d29d3af1"; // ← même bin pour l'instant
-const TITLES = {home:'Accueil',stats:'Statistiques',logs:'Logs Discord',tickets:'Tickets',system:'Système'};
+const TITLES = {home:'Accueil',stats:'Statistiques',logs:'Logs Discord',tickets:'Tickets',system:'Système',settings:'Paramètres'};
 const REFRESH = 15;
- 
+
 let data={}, allLogs=[], logFilter='ALL', cd=REFRESH, charts={}, sbOpen=true, curPage='home';
 let activeChart = 'msg';
- 
+
 // ── Persist page on F5 ──────────────────────────────────────
 const savedPage = sessionStorage.getItem('page') || 'home';
- 
+
 // ── Theme ──────────────────────────────────────────────────
 const initTheme = localStorage.getItem('theme') || 'light';
 applyTheme(initTheme);
@@ -475,10 +516,43 @@ function applyTheme(t){
   rebuildCharts();
 }
 function toggleTheme(){ applyTheme(localStorage.getItem('theme')==='dark'?'light':'dark'); }
- 
+
+// ── Sidebar mode ──────────────────────────────────────────
+function setSbMode(mode, btn){
+  const sb = document.getElementById('sb');
+  if(mode === 'pinned'){
+    sb.classList.add('pinned');
+  } else {
+    sb.classList.remove('pinned');
+  }
+  // Update button states
+  document.querySelectorAll('.sb-mode-btn').forEach(b=>b.classList.remove('act'));
+  if(btn) btn.classList.add('act');
+  localStorage.setItem('sbMode', mode);
+}
+// Init sidebar mode
+(function(){
+  const m = localStorage.getItem('sbMode') || 'hover';
+  const sb = document.getElementById('sb');
+  if(m === 'pinned') sb.classList.add('pinned');
+  // Sync button state when settings page is visited
+  document.addEventListener('click', ()=>{
+    const m2 = localStorage.getItem('sbMode') || 'hover';
+    const bh = document.getElementById('mode-hover');
+    const bp = document.getElementById('mode-pinned');
+    if(bh && bp){
+      bh.classList.toggle('act', m2==='hover');
+      bp.classList.toggle('act', m2==='pinned');
+    }
+    // Sync second theme toggle
+    const tp2 = document.getElementById('tp2');
+    if(tp2) tp2.classList.toggle('on', document.documentElement.hasAttribute('data-dark'));
+  });
+})();
+
 // ── Sidebar ──────────────────────────────────────────────
 function toggleSb(){ sbOpen=!sbOpen; document.getElementById('sb').classList.toggle('col',!sbOpen); }
- 
+
 // ── Nav ─────────────────────────────────────────────────
 function goto(name, el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('act'));
@@ -491,7 +565,7 @@ function goto(name, el){
   // Scroll to top
   document.getElementById('scroll-area').scrollTop = 0;
 }
- 
+
 // ── Utils ────────────────────────────────────────────────
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function fmt(v){ return (v||0).toLocaleString('fr-FR') }
@@ -501,16 +575,16 @@ function setBar(id,pct,cls){
   el.style.width=Math.min(100,Math.round(pct||0))+'%';
   el.className='bf '+cls;
 }
- 
+
 // ── Log rendering ─────────────────────────────────────────
 const TAG_CLS={ban:'tg-ban',mute:'tg-mute',kick:'tg-kick',warn:'tg-warn',member_join:'tg-join',member_leave:'tg-leave',message_delete:'tg-del',message_edit:'tg-edit'};
 const TAG_LBL={ban:'BAN',mute:'MUTE',kick:'KICK',warn:'WARN',member_join:'JOIN',member_leave:'LEAVE',message_delete:'SUPPR',message_edit:'ÉDIT',serveur:'SERVEUR',messages:'MSG',other:'LOG'};
- 
+
 function logHTML(l){
   const tc=TAG_CLS[l.type]||'tg-other', tl=TAG_LBL[l.type]||(l.type||'LOG').toUpperCase();
   return `<div class="log-row"><span class="lr-t">${esc(l.time)}</span><span class="lr-i">${esc(l.icon||'📋')}</span><span class="lr-m">${esc(l.label||'—')}</span><span class="lr-tg ${tc}">${tl}</span></div>`;
 }
- 
+
 function renderLogs(cid, logs, filter, max){
   const c=document.getElementById(cid); if(!c) return;
   const q=(document.getElementById('log-search')?.value||'').toLowerCase();
@@ -519,14 +593,14 @@ function renderLogs(cid, logs, filter, max){
   if(max) fl=fl.slice(0,max);
   c.innerHTML = fl.length ? fl.map(logHTML).join('') : '<div class="log-empty">Aucun événement</div>';
 }
- 
+
 function setLF(btn){
   logFilter=btn.dataset.t;
   document.querySelectorAll('.lf').forEach(b=>b.classList.remove('act'));
   btn.classList.add('act');
   renderLogs('main-logs',allLogs,logFilter);
 }
- 
+
 // ── Tickets ───────────────────────────────────────────────
 function renderTickets(tickets){
   const c=document.getElementById('ticket-list'); if(!c) return;
@@ -541,7 +615,7 @@ function renderTickets(tickets){
   // Badge sidebar
   const badge = document.getElementById('sb-tickets').querySelector('.sb-badge');
   if(badge) badge.textContent = tickets.length;
- 
+
   c.innerHTML = tickets.map(t => {
     const msgs = (t.messages||[]).slice(-5);
     const msgsHTML = msgs.length ? msgs.map(m=>
@@ -550,11 +624,11 @@ function renderTickets(tickets){
         ${esc(m.content||'')}
       </div>`
     ).join('') : '<div style="color:var(--mu);font-size:11px;padding:6px">Aucun message récent</div>';
- 
+
     const claimBadge = t.assigned
       ? `<span class="badge-claim">✅ Pris en charge</span>`
       : `<span style="font-size:10px;color:var(--mu)">⏳ En attente</span>`;
- 
+
     return `<div class="tkt" id="tkt-${esc(t.channel_id)}">
       <div class="tkt-head" onclick="toggleTkt('${esc(t.channel_id)}')">
         <div class="tkt-ic">🎫</div>
@@ -579,11 +653,11 @@ function renderTickets(tickets){
     </div>`;
   }).join('');
 }
- 
+
 function toggleTkt(id){
   document.getElementById('tkt-'+id)?.classList.toggle('open');
 }
- 
+
 async function sendReply(channelId){
   const input = document.getElementById('reply-'+channelId);
   const sentMsg = document.getElementById('sent-'+channelId);
@@ -610,20 +684,20 @@ async function sendReply(channelId){
   input.disabled = false;
   if(btn) btn.disabled = false;
 }
- 
+
 // ── Charts ────────────────────────────────────────────────
 function isDark(){ return document.documentElement.hasAttribute('data-dark') }
 function gc(){ return isDark()?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.05)' }
 function tc(){ return isDark()?'#5a6380':'#8b93a7' }
 function sd(d){ if(!d)return''; const p=d.split('-'); return p[2]+'/'+p[1] }
- 
+
 const chartDefs = {
   msg:  {id:'ch-msg',  build: c=>mkChart('ch-msg',  c.labels, [lineDs('Messages',c.messages||[],'#4f6ef7')])},
   mod:  {id:'ch-mod',  build: c=>mkChart('ch-mod',  c.labels, [barDs('Bans',c.bans||[],'#ef4444'),barDs('Mutes',c.mutes||[],'#f59e0b'),barDs('Kicks',c.kicks||[],'#f97316'),barDs('Warns',c.warns||[],'#8b5cf6')],'bar')},
   mem:  {id:'ch-mem',  build: c=>mkChart('ch-mem',  c.labels, [lineDs('Arrivées',c.joins||[],'#22c55e'),lineDs('Départs',c.leaves||[],'#ef4444')])},
   edit: {id:'ch-edit', build: c=>mkChart('ch-edit', c.labels, [barDs('Supprimés',c.deleted||[],'#ef4444'),barDs('Édités',c.edited||[],'#4f6ef7')],'bar')},
 };
- 
+
 function switchChart(name, btn){
   document.querySelectorAll('.ctab').forEach(b=>b.classList.remove('act'));
   btn.classList.add('act');
@@ -633,7 +707,7 @@ function switchChart(name, btn){
     if(el) el.style.display = k===name?'block':'none';
   });
 }
- 
+
 function mkChart(id, labels, datasets, type='line'){
   const canvas=document.getElementById(id); if(!canvas) return;
   if(charts[id]) charts[id].destroy();
@@ -657,7 +731,7 @@ function mkChart(id, labels, datasets, type='line'){
 function lineDs(label,data,color){ return{label,data,borderColor:color,backgroundColor:color+'18',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.4,fill:true} }
 function barDs(label,data,color){ return{label,data,backgroundColor:color+'cc',borderRadius:5,borderSkipped:false} }
 function rebuildCharts(){ Object.values(charts).forEach(c=>c.destroy()); charts={}; if(data.chart) buildCharts(); }
- 
+
 function buildCharts(){
   const c=data.chart; if(!c||!c.labels) return;
   mkChart('ch-hm',   c.labels, [lineDs('Messages',c.messages||[],'#4f6ef7')]);
@@ -671,12 +745,12 @@ function buildCharts(){
     if(el) el.style.display=k===activeChart?'block':'none';
   });
 }
- 
+
 // ── Render ────────────────────────────────────────────────
 function render(){
   if(!data||!data.stats) return;
   const s=data.stats, on=data.online;
- 
+
   // Hero
   const pill=document.getElementById('h-pill');
   pill.className='pill '+(on?'p-on':'p-off');
@@ -688,10 +762,10 @@ function render(){
   set('h-ram',Math.round(data.bot_ram_mb||0)+' MB');
   set('h-tkt',(data.tickets||[]).length);
   set('h-upd',data.updated_at||'—');
- 
+
   set('h-ban',fmt(s.bans_total)); set('h-mute',fmt(s.mutes_total));
   set('h-kick',fmt(s.kicks_total)); set('h-warn',fmt(s.warns_total||0));
- 
+
   set('s-msg',fmt(s.messages_total)); set('s-cmd',fmt(s.commands_used));
   set('s-join',fmt(s.members_joined)); set('s-leave',fmt(s.members_left));
   set('s-ban',fmt(s.bans_total)); set('s-mute',fmt(s.mutes_total));
@@ -699,10 +773,10 @@ function render(){
   set('s-tick',fmt(s.tickets_opened)); set('s-del',fmt(s.msg_deleted));
   set('s-edit',fmt(s.msg_edited));
   const pe=document.getElementById('s-ping'); if(pe) pe.innerHTML=(data.latency_ms??'—')+'<span class="u"> ms</span>';
- 
+
   set('l-ban',fmt(s.bans_total)); set('l-mute',fmt(s.mutes_total));
   set('l-kick',fmt(s.kicks_total)); set('l-warn',fmt(s.warns_total||0));
- 
+
   // System
   const syst=document.getElementById('sy-st');
   if(syst) syst.innerHTML=on?'<span style="color:var(--gr)">● En ligne</span>':'<span style="color:var(--re)">● Hors ligne</span>';
@@ -714,15 +788,15 @@ function render(){
   set('sy-ram-v',ram+'%'); setBar('sy-ram-b',ram,ram<70?'bf-pu':'bf-re');
   const br=Math.round(data.bot_ram_mb||0);
   set('sy-bot-v',br+' MB'); setBar('sy-bot-b',Math.min(100,br/5),'bf-gr');
- 
+
   allLogs=data.logs||[];
   renderLogs('home-logs',allLogs,'ALL',6);
   renderLogs('main-logs',allLogs,logFilter);
- 
+
   renderTickets(data.tickets||[]);
   buildCharts();
 }
- 
+
 // ── Fetch ─────────────────────────────────────────────────
 async function fetchData(){
   try{
@@ -732,14 +806,14 @@ async function fetchData(){
     render();
   }catch(e){ console.error('[Dashboard]',e); }
 }
- 
+
 // ── Countdown ─────────────────────────────────────────────
 setInterval(()=>{
   cd--; const v=Math.max(0,cd);
   set('cd-top',v); set('cd-sb',v+'s');
   if(cd<=0){ cd=REFRESH; fetchData(); }
 },1000);
- 
+
 // ── Init ──────────────────────────────────────────────────
 fetchData();
 // Restaurer la page après F5
