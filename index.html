@@ -33,14 +33,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .app{display:flex;height:100vh}
 
 /* ── Sidebar ── */
-.sb-zone{position:relative;flex-shrink:0;width:12px;z-index:20}
+.sb-zone{position:relative;flex-shrink:0;z-index:20;display:flex}
 .sb{
-  position:absolute;left:0;top:0;height:100vh;
+  position:relative;left:0;top:0;height:100vh;
   width:52px;
   background:var(--sf);border-right:1px solid var(--bd);
   display:flex;flex-direction:column;
   transition:width .25s cubic-bezier(.4,0,.2,1),box-shadow .25s;
   overflow:hidden;
+  flex-shrink:0;
 }
 .sb:hover,.sb.pinned{width:220px;box-shadow:4px 0 24px rgba(0,0,0,.1)}
 [data-dark] .sb:hover,[data-dark] .sb.pinned{box-shadow:4px 0 24px rgba(0,0,0,.4)}
@@ -64,7 +65,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--san
 .sb-fi:hover{color:var(--tx);background:var(--sf2)}
 .sb-fi .sb-ic{font-size:15px}
 /* Pin button */
-.sb-pin{position:absolute;top:18px;right:-12px;width:22px;height:22px;border-radius:50%;background:var(--sf);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--mu);opacity:0;transition:opacity .15s;z-index:21}
+.sb-pin{position:absolute;top:18px;right:6px;width:22px;height:22px;border-radius:50%;background:var(--sf);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:10px;color:var(--mu);opacity:0;transition:opacity .15s;z-index:21}
 .sb:hover .sb-pin{opacity:1}
 .sb.pinned .sb-pin{opacity:1;background:var(--acl);color:var(--ac);border-color:var(--ac)}
 
